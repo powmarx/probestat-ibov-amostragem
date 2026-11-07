@@ -1,0 +1,366 @@
+{
+ "fonte": "https://sistemaswebb3-listados.b3.com.br/listedCompaniesProxy/CompanyCall/GetDetail (B3, empresas listadas)",
+ "consultado_em": "2026-10-31 11:58",
+ "empresas": [
+  {
+   "ativo": "ABEV3",
+   "emissor": "ABEV",
+   "codeCVM": "23264",
+   "nome": "AMBEV S/A",
+   "razao_social": "AMBEV S.A.",
+   "classificacao_b3": "Consumo não Cíclico / Bebidas / Cervejas e Refrigerantes",
+   "segmento_listagem": ""
+  },
+  {
+   "ativo": "ALOS3",
+   "emissor": "ALOS",
+   "codeCVM": "22357",
+   "nome": "ALLOS",
+   "razao_social": "ALLOS S.A",
+   "classificacao_b3": "Financeiro / Exploração de Imóveis / Exploração de Imóveis",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "ALPA4",
+   "emissor": "ALPA",
+   "codeCVM": "10456",
+   "nome": "ALPARGATAS",
+   "razao_social": "ALPARGATAS S.A.",
+   "classificacao_b3": "Consumo Cíclico / Tecidos. Vestuário e Calçados / Calçados",
+   "segmento_listagem": "N1"
+  },
+  {
+   "ativo": "AXIA3",
+   "emissor": "AXIA",
+   "codeCVM": "2437",
+   "nome": "AXIA ENERGIA",
+   "razao_social": "AXIA ENERGIA S.A.",
+   "classificacao_b3": "Utilidade Pública / Energia Elétrica / Energia Elétrica",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "B3SA3",
+   "emissor": "B3SA",
+   "codeCVM": "21610",
+   "nome": "B3",
+   "razao_social": "B3 S.A. - BRASIL. BOLSA. BALCÃO",
+   "classificacao_b3": "Financeiro / Serviços Financeiros Diversos / Serviços Financeiros Diversos",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "BBAS3",
+   "emissor": "BBAS",
+   "codeCVM": "1023",
+   "nome": "BRASIL",
+   "razao_social": "BCO BRASIL S.A.",
+   "classificacao_b3": "Financeiro / Intermediários Financeiros / Bancos",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "BBDC4",
+   "emissor": "BBDC",
+   "codeCVM": "906",
+   "nome": "BRADESCO",
+   "razao_social": "BCO BRADESCO S.A.",
+   "classificacao_b3": "Financeiro / Intermediários Financeiros / Bancos",
+   "segmento_listagem": "N1"
+  },
+  {
+   "ativo": "BRAP4",
+   "emissor": "BRAP",
+   "codeCVM": "18724",
+   "nome": "BRADESPAR",
+   "razao_social": "BRADESPAR S.A.",
+   "classificacao_b3": "Materiais Básicos / Mineração / Minerais Metálicos",
+   "segmento_listagem": "N1"
+  },
+  {
+   "ativo": "CMIN3",
+   "emissor": "CMIN",
+   "codeCVM": "25585",
+   "nome": "CSNMINERACAO",
+   "razao_social": "CSN MINERAÇÃO S.A.",
+   "classificacao_b3": "Materiais Básicos / Mineração / Minerais Metálicos",
+   "segmento_listagem": "N2"
+  },
+  {
+   "ativo": "COGN3",
+   "emissor": "COGN",
+   "codeCVM": "17973",
+   "nome": "COGNA ON",
+   "razao_social": "COGNA EDUCAÇÃO S.A.",
+   "classificacao_b3": "Consumo Cíclico / Diversos / Serviços Educacionais",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "CSAN3",
+   "emissor": "CSAN",
+   "codeCVM": "19836",
+   "nome": "COSAN",
+   "razao_social": "COSAN S.A.",
+   "classificacao_b3": "Petróleo. Gás e Biocombustíveis / Petróleo. Gás e Biocombustíveis / Exploração. Refino e Distribuição",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "CSNA3",
+   "emissor": "CSNA",
+   "codeCVM": "4030",
+   "nome": "SID NACIONAL",
+   "razao_social": "CIA SIDERURGICA NACIONAL",
+   "classificacao_b3": "Materiais Básicos / Siderurgia e Metalurgia / Siderurgia",
+   "segmento_listagem": ""
+  },
+  {
+   "ativo": "CVCB3",
+   "emissor": "CVCB",
+   "codeCVM": "23310",
+   "nome": "CVC BRASIL",
+   "razao_social": "CVC BRASIL OPERADORA E AGÊNCIA DE VIAGENS S.A.",
+   "classificacao_b3": "Consumo Cíclico / Viagens e Lazer / Viagens e Turismo",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "CYRE3",
+   "emissor": "CYRE",
+   "codeCVM": "14460",
+   "nome": "CYRELA REALT",
+   "razao_social": "CYRELA BRAZIL REALTY S.A.EMPREEND E PART",
+   "classificacao_b3": "Consumo Cíclico / Construção Civil / Incorporações",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "EMBJ3",
+   "emissor": "EMBJ",
+   "codeCVM": "20087",
+   "nome": "EMBRAER",
+   "razao_social": "EMBRAER S.A.",
+   "classificacao_b3": "Bens Industriais / Material de Transporte / Material Aeronáutico e de Defesa",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "ENEV3",
+   "emissor": "ENEV",
+   "codeCVM": "21237",
+   "nome": "ENEVA",
+   "razao_social": "ENEVA S.A",
+   "classificacao_b3": "Utilidade Pública / Energia Elétrica / Energia Elétrica",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "EQTL3",
+   "emissor": "EQTL",
+   "codeCVM": "20010",
+   "nome": "EQUATORIAL",
+   "razao_social": "EQUATORIAL S.A.",
+   "classificacao_b3": "Utilidade Pública / Energia Elétrica / Energia Elétrica",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "GGBR4",
+   "emissor": "GGBR",
+   "codeCVM": "3980",
+   "nome": "GERDAU",
+   "razao_social": "GERDAU S.A.",
+   "classificacao_b3": "Materiais Básicos / Siderurgia e Metalurgia / Siderurgia",
+   "segmento_listagem": "N1"
+  },
+  {
+   "ativo": "HAPV3",
+   "emissor": "HAPV",
+   "codeCVM": "24392",
+   "nome": "HAPVIDA",
+   "razao_social": "HAPVIDA PARTICIPACOES E INVESTIMENTOS SA",
+   "classificacao_b3": "Saúde / Serv.Méd.Hospit..Análises e Diagnósticos / Serv.Méd.Hospit..Análises e Diagnósticos",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "IRBR3",
+   "emissor": "IRBR",
+   "codeCVM": "24180",
+   "nome": "IRBBRASIL RE",
+   "razao_social": "IRB - BRASIL RESSEGUROS S.A.",
+   "classificacao_b3": "Financeiro / Previdência e Seguros / Resseguradoras",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "ITUB4",
+   "emissor": "ITUB",
+   "codeCVM": "19348",
+   "nome": "ITAUUNIBANCO",
+   "razao_social": "ITAU UNIBANCO HOLDING S.A.",
+   "classificacao_b3": "Financeiro / Intermediários Financeiros / Bancos",
+   "segmento_listagem": "N1"
+  },
+  {
+   "ativo": "KLBN11",
+   "emissor": "KLBN",
+   "codeCVM": "12653",
+   "nome": "KLABIN S/A",
+   "razao_social": "KLABIN S.A.",
+   "classificacao_b3": "Materiais Básicos / Madeira e Papel / Papel e Celulose",
+   "segmento_listagem": "N2"
+  },
+  {
+   "ativo": "LREN3",
+   "emissor": "LREN",
+   "codeCVM": "8133",
+   "nome": "LOJAS RENNER",
+   "razao_social": "LOJAS RENNER S.A.",
+   "classificacao_b3": "Consumo Cíclico / Comércio / Tecidos. Vestuário e Calçados",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "MGLU3",
+   "emissor": "MGLU",
+   "codeCVM": "22470",
+   "nome": "MAGAZ LUIZA",
+   "razao_social": "MAGAZINE LUIZA S.A.",
+   "classificacao_b3": "Consumo Cíclico / Comércio / Eletrodomésticos",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "MRVE3",
+   "emissor": "MRVE",
+   "codeCVM": "20915",
+   "nome": "MRV",
+   "razao_social": "MRV ENGENHARIA E PARTICIPACOES S.A.",
+   "classificacao_b3": "Consumo Cíclico / Construção Civil / Incorporações",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "PCAR3",
+   "emissor": "PCAR",
+   "codeCVM": "14826",
+   "nome": "P.ACUCAR-CBD",
+   "razao_social": "CIA BRASILEIRA DE DISTRIBUICAO",
+   "classificacao_b3": "Consumo não Cíclico / Comércio e Distribuição / Alimentos",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "PETR4",
+   "emissor": "PETR",
+   "codeCVM": "9512",
+   "nome": "PETROBRAS",
+   "razao_social": "PETROLEO BRASILEIRO S.A. PETROBRAS",
+   "classificacao_b3": "Petróleo. Gás e Biocombustíveis / Petróleo. Gás e Biocombustíveis / Exploração. Refino e Distribuição",
+   "segmento_listagem": "N2"
+  },
+  {
+   "ativo": "PRIO3",
+   "emissor": "PRIO",
+   "codeCVM": "22187",
+   "nome": "PRIO",
+   "razao_social": "PRIO S.A.",
+   "classificacao_b3": "Petróleo. Gás e Biocombustíveis / Petróleo. Gás e Biocombustíveis / Exploração. Refino e Distribuição",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "RADL3",
+   "emissor": "RADL",
+   "codeCVM": "5258",
+   "nome": "RAIADROGASIL",
+   "razao_social": "RAIA DROGASIL S.A.",
+   "classificacao_b3": "Saúde / Comércio e Distribuição / Medicamentos e Outros Produtos",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "RENT3",
+   "emissor": "RENT",
+   "codeCVM": "19739",
+   "nome": "LOCALIZA",
+   "razao_social": "LOCALIZA RENT A CAR S.A.",
+   "classificacao_b3": "Consumo Cíclico / Diversos / Aluguel de carros",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "SBSP3",
+   "emissor": "SBSP",
+   "codeCVM": "14443",
+   "nome": "SABESP",
+   "razao_social": "CIA SANEAMENTO BASICO EST SAO PAULO",
+   "classificacao_b3": "Utilidade Pública / Água e Saneamento / Água e Saneamento",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "SLCE3",
+   "emissor": "SLCE",
+   "codeCVM": "20745",
+   "nome": "SLC AGRICOLA",
+   "razao_social": "SLC AGRICOLA S.A.",
+   "classificacao_b3": "Consumo não Cíclico / Agropecuária / Agricultura",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "SMTO3",
+   "emissor": "SMTO",
+   "codeCVM": "20516",
+   "nome": "SAO MARTINHO",
+   "razao_social": "SAO MARTINHO S.A.",
+   "classificacao_b3": "Consumo não Cíclico / Alimentos Processados / Açucar e Alcool",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "SUZB3",
+   "emissor": "SUZB",
+   "codeCVM": "13986",
+   "nome": "SUZANO S.A.",
+   "razao_social": "SUZANO S.A.",
+   "classificacao_b3": "Materiais Básicos / Madeira e Papel / Papel e Celulose",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "TOTS3",
+   "emissor": "TOTS",
+   "codeCVM": "19992",
+   "nome": "TOTVS",
+   "razao_social": "TOTVS S.A.",
+   "classificacao_b3": "Tecnologia da Informação / Programas e Serviços / Programas e Serviços",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "UGPA3",
+   "emissor": "UGPA",
+   "codeCVM": "18465",
+   "nome": "ULTRAPAR",
+   "razao_social": "ULTRAPAR PARTICIPACOES S.A.",
+   "classificacao_b3": "Petróleo. Gás e Biocombustíveis / Petróleo. Gás e Biocombustíveis / Exploração. Refino e Distribuição",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "USIM5",
+   "emissor": "USIM",
+   "codeCVM": "14320",
+   "nome": "USIMINAS",
+   "razao_social": "USINAS SID DE MINAS GERAIS S.A.-USIMINAS",
+   "classificacao_b3": "Materiais Básicos / Siderurgia e Metalurgia / Siderurgia",
+   "segmento_listagem": "N1"
+  },
+  {
+   "ativo": "VALE3",
+   "emissor": "VALE",
+   "codeCVM": "4170",
+   "nome": "VALE",
+   "razao_social": "VALE S.A.",
+   "classificacao_b3": "Materiais Básicos / Mineração / Minerais Metálicos",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "WEGE3",
+   "emissor": "WEGE",
+   "codeCVM": "5410",
+   "nome": "WEG",
+   "razao_social": "WEG S.A.",
+   "classificacao_b3": "Bens Industriais / Máquinas e Equipamentos / Motores . Compressores e Outros",
+   "segmento_listagem": "NM"
+  },
+  {
+   "ativo": "YDUQ3",
+   "emissor": "YDUQ",
+   "codeCVM": "21016",
+   "nome": "YDUQS PART",
+   "razao_social": "YDUQS PARTICIPACOES S.A.",
+   "classificacao_b3": "Consumo Cíclico / Diversos / Serviços Educacionais",
+   "segmento_listagem": "NM"
+  }
+ ]
+}

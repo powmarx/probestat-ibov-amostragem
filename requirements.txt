@@ -1,0 +1,9 @@
+# Python 3.12 (o mesmo escolhido em "Advanced settings" no Streamlit Community Cloud).
+# numpy fixado na versão que sorteou a amostra (dados/manifesto.json).
+numpy==2.5.3
+pandas==3.0.6
+pyarrow==25.0.1
+scipy==1.18.1
+streamlit==1.64.0
+plotly==7.1.0
+pytest

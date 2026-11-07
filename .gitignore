@@ -1,0 +1,19 @@
+# CSV da população (~24 MB): vai compactado em dados/populacao.zip
+dados/populacao.csv
+
+# documentos de trabalho, fora do repositório público
+docs/plano.md
+docs/roteiro_video.md
+
+# caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# ambientes virtuais (o do trabalho fica fora da pasta do projeto)
+.venv/
+venv/
+
+# segredos locais, se algum dia existirem
+.env
+.streamlit/secrets.toml

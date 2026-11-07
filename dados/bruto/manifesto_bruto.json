@@ -1,0 +1,7 @@
+{
+  "congelado_em": "2026-10-31T11:26:20",
+  "origem": "E:\\OneDrive\\PosIA\\dados_mercado\\serie\\1d",
+  "data_fim": "2026-10-30",
+  "arquivos": 41,
+  "fonte": "Yahoo Finance, https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}.SA?interval=1d&range=10y"
+}

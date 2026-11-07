@@ -1,0 +1,41 @@
+ativo,empresa,codigo_cvm,setor,subsetor,segmento
+ABEV3,AMBEV S/A,23264,Consumo não Cíclico,Bebidas,Cervejas e Refrigerantes
+ALOS3,ALLOS,22357,Financeiro,Exploração de Imóveis,Exploração de Imóveis
+ALPA4,ALPARGATAS,10456,Consumo Cíclico,"Tecidos, Vestuário e Calçados",Calçados
+AXIA3,AXIA ENERGIA,2437,Utilidade Pública,Energia Elétrica,Energia Elétrica
+B3SA3,B3,21610,Financeiro,Serviços Financeiros Diversos,Serviços Financeiros Diversos
+BBAS3,BRASIL,1023,Financeiro,Intermediários Financeiros,Bancos
+BBDC4,BRADESCO,906,Financeiro,Intermediários Financeiros,Bancos
+BRAP4,BRADESPAR,18724,Materiais Básicos,Mineração,Minerais Metálicos
+CMIN3,CSNMINERACAO,25585,Materiais Básicos,Mineração,Minerais Metálicos
+COGN3,COGNA ON,17973,Consumo Cíclico,Diversos,Serviços Educacionais
+CSAN3,COSAN,19836,"Petróleo, Gás e Biocombustíveis","Petróleo, Gás e Biocombustíveis","Exploração, Refino e Distribuição"
+CSNA3,SID NACIONAL,4030,Materiais Básicos,Siderurgia e Metalurgia,Siderurgia
+CVCB3,CVC BRASIL,23310,Consumo Cíclico,Viagens e Lazer,Viagens e Turismo
+CYRE3,CYRELA REALT,14460,Consumo Cíclico,Construção Civil,Incorporações
+EMBJ3,EMBRAER,20087,Bens Industriais,Material de Transporte,Material Aeronáutico e de Defesa
+ENEV3,ENEVA,21237,Utilidade Pública,Energia Elétrica,Energia Elétrica
+EQTL3,EQUATORIAL,20010,Utilidade Pública,Energia Elétrica,Energia Elétrica
+GGBR4,GERDAU,3980,Materiais Básicos,Siderurgia e Metalurgia,Siderurgia
+HAPV3,HAPVIDA,24392,Saúde,"Serv.Méd.Hospit., Análises e Diagnósticos","Serv.Méd.Hospit., Análises e Diagnósticos"
+IRBR3,IRBBRASIL RE,24180,Financeiro,Previdência e Seguros,Resseguradoras
+ITUB4,ITAUUNIBANCO,19348,Financeiro,Intermediários Financeiros,Bancos
+KLBN11,KLABIN S/A,12653,Materiais Básicos,Madeira e Papel,Papel e Celulose
+LREN3,LOJAS RENNER,8133,Consumo Cíclico,Comércio,"Tecidos, Vestuário e Calçados"
+MGLU3,MAGAZ LUIZA,22470,Consumo Cíclico,Comércio,Eletrodomésticos
+MRVE3,MRV,20915,Consumo Cíclico,Construção Civil,Incorporações
+PCAR3,P.ACUCAR-CBD,14826,Consumo não Cíclico,Comércio e Distribuição,Alimentos
+PETR4,PETROBRAS,9512,"Petróleo, Gás e Biocombustíveis","Petróleo, Gás e Biocombustíveis","Exploração, Refino e Distribuição"
+PRIO3,PRIO,22187,"Petróleo, Gás e Biocombustíveis","Petróleo, Gás e Biocombustíveis","Exploração, Refino e Distribuição"
+RADL3,RAIADROGASIL,5258,Saúde,Comércio e Distribuição,Medicamentos e Outros Produtos
+RENT3,LOCALIZA,19739,Consumo Cíclico,Diversos,Aluguel de carros
+SBSP3,SABESP,14443,Utilidade Pública,Água e Saneamento,Água e Saneamento
+SLCE3,SLC AGRICOLA,20745,Consumo não Cíclico,Agropecuária,Agricultura
+SMTO3,SAO MARTINHO,20516,Consumo não Cíclico,Alimentos Processados,Açucar e Alcool
+SUZB3,SUZANO S.A.,13986,Materiais Básicos,Madeira e Papel,Papel e Celulose
+TOTS3,TOTVS,19992,Tecnologia da Informação,Programas e Serviços,Programas e Serviços
+UGPA3,ULTRAPAR,18465,"Petróleo, Gás e Biocombustíveis","Petróleo, Gás e Biocombustíveis","Exploração, Refino e Distribuição"
+USIM5,USIMINAS,14320,Materiais Básicos,Siderurgia e Metalurgia,Siderurgia
+VALE3,VALE,4170,Materiais Básicos,Mineração,Minerais Metálicos
+WEGE3,WEG,5410,Bens Industriais,Máquinas e Equipamentos,"Motores, Compressores e Outros"
+YDUQ3,YDUQS PART,21016,Consumo Cíclico,Diversos,Serviços Educacionais

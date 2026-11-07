@@ -1,0 +1,8 @@
+{
+  "baixado_em": "2026-11-03T10:49:28",
+  "data_fim": "2026-10-30",
+  "arquivos": 40,
+  "falhas": [],
+  "fonte": "TradingView, bolsa BMFBOVESPA, diário, via biblioteca tvdatafeed (não oficial), sem login",
+  "uso": "só conferência da base do Yahoo (docs/conferencia_tradingview.md)"
+}

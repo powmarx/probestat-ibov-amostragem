@@ -1,0 +1,5 @@
+# Arquivos de dados guardados byte a byte: o SHA-256 do manifesto vale para qualquer clone.
+*.csv binary
+*.json binary
+*.parquet binary
+*.zip binary

@@ -1,0 +1,30 @@
+{
+  "gerado_em": "2026-11-06T16:30:00",
+  "populacao": {
+    "N": 96610,
+    "inicio": "2016-10-31",
+    "fim": "2026-10-30",
+    "acoes": 40,
+    "pregoes": 2482,
+    "sha256_csv": "944efe618b44f8676d13f18ce0e110bbb0e0f2ef7edad131d6bc2aac434c3042"
+  },
+  "dimensionamento": {
+    "confianca_pct": 95,
+    "erro_pp": 2.0,
+    "proporcao_pct": 50.0,
+    "efeito_desenho": 1.0,
+    "perda_pct": 0.0,
+    "z": 1.959963984540054,
+    "n0": 2400.9117629338284,
+    "n_infinita": 2401,
+    "n_finita_exato": 2342.715807811402,
+    "n": 2343
+  },
+  "selecao": {
+    "metodo": "AAS sem reposição",
+    "semente": 2026,
+    "codigo": "numpy.random.default_rng(2026).choice(96610, 2343, replace=False)",
+    "numpy": "2.5.3",
+    "sha256_csv": "4e2f96de620fefd3aa31fe633495de2ab23da65dc5c59a312c976061db041c21"
+  }
+}
