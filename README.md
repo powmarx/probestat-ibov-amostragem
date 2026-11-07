@@ -8,7 +8,10 @@ comparando a população com uma amostra aleatória simples em três painéis in
 
 | Entrega | Link |
 |---|---|
-| Painéis (Streamlit) | _a preencher após a publicação_ |
+| Painéis (Streamlit) | https://probestat-ibov-amostragem.streamlit.app/ (um app com as três páginas no menu lateral) |
+| Painel 1 — População | https://probestat-ibov-amostragem.streamlit.app/ (página inicial) |
+| Painel 2 — Amostra | https://probestat-ibov-amostragem.streamlit.app/p2_amostra |
+| Painel 3 — Inferência e comparação | https://probestat-ibov-amostragem.streamlit.app/p3_inferencia |
 | Vídeo (YouTube, não listado) | _a preencher_ |
 | Base de dados (CSV da população) | [`dados/populacao.zip`](dados/populacao.zip) · fonte: [Yahoo Finance](https://finance.yahoo.com/quote/VALE3.SA/history) |
 
