@@ -20,6 +20,13 @@ def pval(p: float) -> str:
     return '< 0,0001' if p < 1e-4 else num(p, 4)
 
 
+def reais_mi(v: float) -> str:
+    """Valor em R$ milhões, legível também quando é pequeno: 132,17 -> 'R$ 132,2 mi'; 0,0013 -> 'R$ 1,3 mil'."""
+    if abs(v) >= 1:
+        return f'R$ {num(v, 1)} mi'
+    return f'R$ {num(v * 1000, 1)} mil'
+
+
 def inteiro(v) -> str:
     return num(float(v), 0)
 

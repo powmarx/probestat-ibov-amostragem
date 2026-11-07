@@ -119,6 +119,17 @@ def test_grafico_caixa_com_e_sem_pontos(P):
     assert 'Pontos:' in nota_com
     _, nota_log = C.grafico_caixa([(P, 'População', C.COR_POP)], 'fin')
     assert 'R$' in ' '.join(a.text for a in _.layout.annotations)
+    # volume pequeno não pode aparecer como zero (rótulo, tabela, eixo e nota)
+    assert any('mínimo na população: R$ 1,3 mil' in a.text for a in _.layout.annotations)
+    assert D.tabela_medidas(P).set_index('variável').loc['Volume financeiro', 'mínimo'] == '0,0013'
+    assert '0,001' in _.layout.yaxis.ticktext
+    assert 'não volume zero' in nota_log and '916 linhas' in nota_log and 'R$ 1,3 mil (ENEV3, 22/06/2017' in nota_log
+
+
+def test_reais_mi():
+    assert F.reais_mi(132.17) == 'R$ 132,2 mi'
+    assert F.reais_mi(11601.24) == 'R$ 11.601,2 mi'
+    assert F.reais_mi(0.0013) == 'R$ 1,3 mil'
 
 
 def test_tabela_conferencia(P):

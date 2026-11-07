@@ -81,6 +81,27 @@ DICIONARIO = [
 ]
 
 
+def nota_volume_baixo(d: pd.DataFrame, quem: str = 'população') -> str:
+    """Explica os dias de volume financeiro muito baixo (abaixo de R$ 1 milhão), que não são volume zero."""
+    x = d['fin']
+    baixo = d[x < 1]
+    k = len(baixo)
+    if k == 0:
+        return ''
+    por_acao = baixo['ativo'].value_counts()
+    acumulado = por_acao.cumsum() / k
+    principais = por_acao.iloc[:int((acumulado < 0.95).sum()) + 1]
+    itens = [f'{a} ({F.inteiro(n)})' for a, n in principais.items()]
+    lista = itens[0] if len(itens) == 1 else ', '.join(itens[:-1]) + ' e ' + itens[-1]
+    quase = 'todas' if len(principais) == len(por_acao) else 'quase todas'
+    i = x.idxmin()
+    return (f' Na {quem}, abaixo de R$ 1 milhão há {F.inteiro(k)} linhas ({F.pct(k / len(d), 1)}): são dias reais de pouco '
+            f'negócio, não volume zero (os dias sem negócio estão fora da população). São {quase} de {lista}, '
+            f'entre {baixo["ano"].min()} e {baixo["ano"].max()}, quando essas ações tinham pouca liquidez. O menor é '
+            f'{F.reais_mi(x[i])} ({d.at[i, "ativo"]}, {F.data(d.at[i, "data"])}, '
+            f'{F.inteiro(d.at[i, "volume"])} ações).')
+
+
 def tabela_conferencia(d: pd.DataFrame) -> pd.DataFrame:
     """Contagem das categorias da conferência com o TradingView."""
     import conferir_tradingview as CT
@@ -133,7 +154,10 @@ def tabela_medidas(d: pd.DataFrame, colunas=None) -> pd.DataFrame:
         casas = 2 if c == 'fin' else 3
         linha = {'variável': QUANTITATIVAS[c]['nome'], 'unidade': QUANTITATIVAS[c]['unidade']}
         for k, rot in ROTULOS_MEDIDAS.items():
-            linha[rot] = F.inteiro(m[k]) if k == 'n' else F.num(m[k], 2 if k in ('assimetria', 'curtose') else casas)
+            cs = 2 if k in ('assimetria', 'curtose') else casas
+            if c == 'fin' and 0 < abs(m[k]) < 0.01:     # o menor volume (R$ 0,0013 mi) não pode virar "0,00"
+                cs = 4
+            linha[rot] = F.inteiro(m[k]) if k == 'n' else F.num(m[k], cs)
         linhas.append(linha)
     return pd.DataFrame(linhas)
 

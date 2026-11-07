@@ -63,6 +63,12 @@ def estilo() -> None:
     st.html(ESTILO)
 
 
+def md(texto: str) -> str:
+    """Texto gerado pronto para st.markdown/st.caption: o Streamlit lê dois "R$" como fórmula, então o
+    cifrão é escapado."""
+    return texto.replace('$', r'\$')
+
+
 # ---------------------------------------------------------------- dados
 def _versao(p: Path) -> float:
     return p.stat().st_mtime
@@ -128,8 +134,10 @@ def layout(fig: go.Figure, altura: int = 320, x: str | None = None, y: str | Non
 
 
 def _eixo_log(fig: go.Figure, eixo: str = 'x') -> None:
-    vals = [0, 1, 2, 3, 4]
-    texto = ['1', '10', '100', '1.000', '10.000']
+    # de R$ 1 mil a R$ 10 bilhões: o menor volume da base é ~R$ 0,001 milhão; sem as marcas abaixo de 1,
+    # os dias de pouco volume pareciam estar em zero
+    vals = [-3, -2, -1, 0, 1, 2, 3, 4]
+    texto = ['0,001', '0,01', '0,1', '1', '10', '100', '1.000', '10.000']
     (fig.update_xaxes if eixo == 'x' else fig.update_yaxes)(tickvals=vals, ticktext=texto)
 
 
@@ -187,7 +195,7 @@ def grafico_histograma(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: s
 
 def _valor(v: float, log: bool) -> str:
     if log:
-        return f'R$ {F.num(v, 1)} mi'
+        return F.reais_mi(v)
     return ('+' if v > 0 else '') + f'{F.num(v, 2)}%'
 
 
@@ -220,8 +228,9 @@ def grafico_caixa(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str, p
             reais = x.loc[fora.index] if log else fora
             fig.add_trace(go.Scattergl(
                 x=k + rng.uniform(-0.18, 0.18, len(fora)), y=fora.values, mode='markers',
-                marker=dict(color=cor, size=3, opacity=0.35), showlegend=False, customdata=reais.values,
-                hovertemplate=('R$ %{customdata:,.1f} mi' if log else '%{y:.2f}%') + f'<extra>{nome}</extra>'))
+                marker=dict(color=cor, size=3, opacity=0.35), showlegend=False,
+                customdata=[_valor(v, log) for v in reais.values],
+                hovertemplate='%{customdata}' + f'<extra>{nome}</extra>'))
         contagens.append((nome, c['fora'], c['n']))
         imin, imax = x.idxmin(), x.idxmax()
         extremos.append((k, (x[imin], _onde(d, imin)), (x[imax], _onde(d, imax)), c, nome.lower()))
@@ -254,7 +263,7 @@ def grafico_caixa(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str, p
     else:
         fora_txt = '; '.join(f'{nome}: {F.inteiro(f)} linhas, {F.pct(f / n, 1)}' for nome, f, n in contagens)
     base = ('Caixa: 1º quartil, mediana e 3º quartil; tracejado dentro da caixa: média; bigodes: até 1,5 × a '
-            'distância entre os quartis. ')
+            'distância entre os quartis' + (', calculada no logaritmo do valor, como o eixo' if log else '') + '. ')
     if pontos:
         nota = (f'Pontos: os valores além dos bigodes ({fora_txt}), espalhados na horizontal só para não se '
                 'sobreporem. O eixo vai do mínimo ao máximo, por isso a caixa fica pequena: é o peso das '
@@ -263,6 +272,8 @@ def grafico_caixa(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str, p
         nota = (f'Os valores além dos bigodes ({fora_txt}) não aparecem como pontos, para não poluir o '
                 f'gráfico; o menor e o maior valor de {nome_var} estão escritos nas bordas, com a ação e o '
                 'dia, e na tabela de medidas. Todos entram nas medidas.')
+    if log and coluna == 'fin':
+        nota += D.nota_volume_baixo(conjuntos[0][0], conjuntos[0][1].lower())
     return fig, base + nota
 
 

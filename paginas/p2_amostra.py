@@ -150,8 +150,8 @@ with g2:
     pontos = st.toggle('Mostrar os valores além dos bigodes', value=False, key='p2_pontos')
     fig, nota = C.grafico_caixa(pares, var, pontos=pontos)
     C.mostrar(fig, 'p2_caixa')
-    st.caption(nota)
-st.markdown('**Na amostra:** ' + D.frase_forma(a[var], info['unidade'], positiva=info.get('positiva', False)))
+    st.caption(C.md(nota))
+st.markdown('**Na amostra:** ' + C.md(D.frase_forma(a[var], info['unidade'], positiva=info.get('positiva', False))))
 st.dataframe(D.comparar_medidas(f, a, var), hide_index=True, width='stretch')
 
 st.subheader('Variáveis qualitativas')

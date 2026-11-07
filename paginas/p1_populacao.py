@@ -95,8 +95,8 @@ with g2:
     pontos = st.toggle('Mostrar os valores além dos bigodes', value=False, key='p1_pontos')
     fig, nota = C.grafico_caixa([(f, 'População', C.COR_POP)], var, pontos=pontos)
     C.mostrar(fig, 'p1_caixa')
-    st.caption(nota)
-st.markdown(D.frase_forma(f[var], info['unidade'], positiva=info.get('positiva', False)))
+    st.caption(C.md(nota))
+st.markdown(C.md(D.frase_forma(f[var], info['unidade'], positiva=info.get('positiva', False))))
 
 st.subheader('Medidas descritivas das cinco variáveis quantitativas')
 st.dataframe(D.tabela_medidas(f), hide_index=True, width='stretch')
