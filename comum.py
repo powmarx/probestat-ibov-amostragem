@@ -393,6 +393,19 @@ def grafico_simulacao(sim: dict, linha, altura: int = 460) -> go.Figure:
                                             font=dict(size=14)), margin=dict(t=50))
     fig.update_xaxes(ticksuffix=u)
     fig.update_yaxes(range=[0, topo])
+    # H0 muito longe das estimativas (P1: 50% contra 66–73%) espremeria o histograma num canto.
+    # Nesse caso o eixo cobre só as estimativas, e uma nota indica de que lado H0 ficou.
+    x_h0 = h.valor_h0 * k
+    vao = (bordas[-1] - bordas[0])
+    folga = 0.2 * vao
+    if x_h0 < bordas[0] - vao or x_h0 > bordas[-1] + vao:
+        fig.update_xaxes(range=[bordas[0] - folga, bordas[-1] + folga])
+        esquerda = x_h0 < bordas[0]
+        fig.add_annotation(xref='paper', yref='paper', x=0.01 if esquerda else 0.99, y=0.95,
+                           xanchor='left' if esquerda else 'right', showarrow=False,
+                           text=(f'{"◀ " if esquerda else ""}H₀ = {F.num(x_h0, casas)}{u} fica fora da escala, '
+                                 f'{"à esquerda" if esquerda else "à direita"}{"" if esquerda else " ▶"}'),
+                           font=dict(size=14, color='#555555'), bgcolor='rgba(255,255,255,0.85)')
     return fig
 
 

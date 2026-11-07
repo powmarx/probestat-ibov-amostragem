@@ -209,7 +209,8 @@ esc = st.selectbox('Hipótese', [l.hipotese.codigo for l in linhas], index=3, ke
 C.mostrar(C.grafico_simulacao(sim, L[esc]), 'p3_hist_sim')
 st.caption(f'Cada barra cinza conta quantas das {F.inteiro(sim["r"])} amostras deram aquela estimativa. Linha azul '
            'contínua: o valor da população; laranja pontilhada: a estimativa da amostra oficial; cinza tracejada: '
-           'o valor de H₀. Quando H₀ fica longe das barras (como na P1), quase nenhuma amostra deixaria de '
+           'o valor de H₀. Quando H₀ fica longe das barras (como na P1, em que fica fora da escala e o eixo '
+           'mostra só as estimativas), quase nenhuma amostra deixaria de '
            'rejeitá-lo; quando fica no meio delas (como na M1), quase nenhuma o rejeitaria.')
 
 st.subheader('Exercício: sortear outra amostra')
