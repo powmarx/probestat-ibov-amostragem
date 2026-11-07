@@ -220,9 +220,22 @@ def grafico_caixa(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str, p
         x = d[coluna].dropna()
         v = np.log10(x[x > 0]) if log else x
         c = D.caixa(v)
+        # média aritmética, a mesma da tabela de medidas (no eixo log, a média dos logs seria outra coisa)
+        media = np.log10(x.mean()) if log else c['media']
         fig.add_box(x=[k], name=nome, q1=[c['q1']], median=[c['mediana']], q3=[c['q3']],
-                    lowerfence=[c['bigode_baixo']], upperfence=[c['bigode_alto']], mean=[c['media']],
-                    marker_color=cor, boxpoints=False, width=0.5)
+                    lowerfence=[c['bigode_baixo']], upperfence=[c['bigode_alto']], mean=[media],
+                    marker_color=cor, boxpoints=False, width=0.5, hoverinfo='skip')
+        # rótulo próprio, em português e em valores reais (o padrão do Plotly mostra "max", "q1"… e,
+        # no eixo log, o logaritmo); pontos invisíveis ao longo da caixa disparam o mesmo rótulo
+        real = (lambda z: F.reais_mi(10 ** z)) if log else (lambda z: f'{F.num(z, 3)}%')   # casas da tabela
+        rotulo = (f'<b>{nome}</b><br>fim do bigode superior: {real(c["bigode_alto"])}'
+                  f'<br>3º quartil: {real(c["q3"])}<br>mediana: {real(c["mediana"])}'
+                  f'<br>média: {real(media)}<br>1º quartil: {real(c["q1"])}'
+                  f'<br>fim do bigode inferior: {real(c["bigode_baixo"])}')
+        alturas = [c['bigode_baixo'], c['q1'], c['mediana'], c['q3'], c['bigode_alto']]
+        fig.add_trace(go.Scatter(x=[k] * len(alturas), y=alturas, mode='markers', showlegend=False,
+                                 marker=dict(size=30, opacity=0), hovertemplate=rotulo + '<extra></extra>',
+                                 hoverlabel=dict(bgcolor='white', font_size=13)))
         fora = v[(v < c['bigode_baixo']) | (v > c['bigode_alto'])]
         if pontos and len(fora):
             reais = x.loc[fora.index] if log else fora

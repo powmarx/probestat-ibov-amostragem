@@ -110,8 +110,12 @@ def test_grafico_caixa_com_e_sem_pontos(P):
     import comum as C
     sem, nota_sem = C.grafico_caixa([(P, 'População', C.COR_POP)], 'ret')
     com, nota_com = C.grafico_caixa([(P, 'População', C.COR_POP)], 'ret', pontos=True)
-    assert len(sem.data) == 1 and len(com.data) == 2
-    assert len(com.data[1].y) == D.caixa(P['ret'])['fora'] == 5010        # todos, sem amostrar
+    pontos_fora = [t for t in com.data if t.type == 'scattergl']
+    assert not [t for t in sem.data if t.type == 'scattergl'] and len(pontos_fora) == 1
+    assert len(pontos_fora[0].y) == D.caixa(P['ret'])['fora'] == 5010        # todos, sem amostrar
+    # rótulo da caixa em português e em valores reais; a caixa não usa o rótulo padrão do Plotly
+    assert sem.data[0].hoverinfo == 'skip'
+    assert 'média: 0,053%' in sem.data[1].hovertemplate and 'median' not in sem.data[1].hovertemplate.replace('mediana', '')
     textos = [a.text for a in sem.layout.annotations]
     assert any('máximo na população: +139,13%<br>PCAR3, 01/02/2017' in t for t in textos)
     assert any('MGLU3, 26/10/2026<br>▼ mínimo na população: −58,23%' in t for t in textos)
@@ -121,6 +125,8 @@ def test_grafico_caixa_com_e_sem_pontos(P):
     assert 'R$' in ' '.join(a.text for a in _.layout.annotations)
     # volume pequeno não pode aparecer como zero (rótulo, tabela, eixo e nota)
     assert any('mínimo na população: R$ 1,3 mil' in a.text for a in _.layout.annotations)
+    rot = _.data[1].hovertemplate                                  # média aritmética, a da tabela
+    assert 'média: R$ 282,8 mi' in rot and 'mediana: R$ 132,2 mi' in rot and '3º quartil: R$ 313,6 mi' in rot
     assert D.tabela_medidas(P).set_index('variável').loc['Volume financeiro', 'mínimo'] == '0,0013'
     assert '0,001' in _.layout.yaxis.ticktext
     assert 'não volume zero' in nota_log and '916 linhas' in nota_log and 'R$ 1,3 mil (ENEV3, 22/06/2017' in nota_log
