@@ -219,7 +219,10 @@ def test_tabela_humor(P, A):
     assert T['n'].sum() == (P['humor_ant'] != D.SEM_REF).sum()
     assert T.loc['medo extremo', 'agitados'] == pytest.approx(0.420, abs=0.001)
     assert T['alta'].between(0.48, 0.52).all()
-    assert 'o humor de ontem não diz para onde' in D.frase_humor(D.tabela_humor(P))
+    frase = D.frase_humor(D.tabela_humor(P))
+    assert 'o humor de ontem não diz para onde' in frase
+    assert 'sobem para 42% depois de medo extremo' in frase and '(34% no geral)' in frase
+    assert 'pergunta para outro trabalho' in frase
     assert D.frase_humor(D.tabela_humor(P[P['ano'] == 2017])).startswith('Sem linhas')
 
 

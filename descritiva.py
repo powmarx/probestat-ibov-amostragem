@@ -466,12 +466,15 @@ def frase_humor(T: pd.DataFrame) -> str:
     lo, hi = T['alta'].min(), T['alta'].max()
     me = T[T['faixa'] == 'medo extremo']
     resto = T[T['faixa'] != 'medo extremo']
+    geral = float((T['agitados'] * T['n']).sum() / T['n'].sum())     # todas as linhas com referência
     texto = (f'A proporção de dias de alta fica entre {F.pct(lo, 1)} e {F.pct(hi, 1)} em todas as faixas: o humor '
              'de ontem não diz para onde a ação vai hoje. ')
     if len(me) and len(resto):
         texto += (f'Já os dias agitados sobem para {F.pct(me["agitados"].iloc[0], 0)} depois de medo extremo, contra '
-                  f'{F.pct(resto["agitados"].min(), 0)} a {F.pct(resto["agitados"].max(), 0)} nas outras faixas: '
-                  'o humor diz mais sobre quanto a ação se mexe.')
+                  f'{F.pct(resto["agitados"].min(), 0)} a {F.pct(resto["agitados"].max(), 0)} nas outras faixas '
+                  f'({F.pct(geral, 0)} no geral): o humor diz mais sobre quanto a ação se mexe. Em parte, isso vem do '
+                  'próprio índice, que inclui a volatilidade recente; testar se o humor acrescenta algo além dela '
+                  'seria uma pergunta para outro trabalho.')
     return texto
 
 
