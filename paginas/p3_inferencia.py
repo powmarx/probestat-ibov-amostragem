@@ -69,9 +69,10 @@ for aba, l in zip(abas, linhas):
     with aba:
         st.subheader(f'{h.codigo} — {h.titulo}')
         if h.complementar:
-            st.info('Hipótese complementar, formulada depois da exploração dos dados, para haver dois testes '
-                    'sobre o mesmo parâmetro. O resultado oficial do trabalho é o das quatro principais.',
-                    icon=':material/info:')
+            st.info('Hipótese complementar, acrescentada depois das quatro principais para atender a uma segunda '
+                    'leitura do enunciado: duas hipóteses sobre o mesmo parâmetro de proporção e duas sobre o '
+                    'mesmo parâmetro de média. Usa a mesma amostra e os mesmos métodos; o resultado oficial do '
+                    'trabalho continua sendo o das quatro principais.', icon=':material/info:')
         st.markdown(f'**Pergunta:** {h.pergunta}')
         tipo = 'Proporção' if h.tipo == 'proporcao' else 'Média'
         st.markdown(f'**{"Evento" if h.tipo == "proporcao" else "Variável"} ({tipo.lower()}):** {h.definicao}.')
@@ -257,6 +258,8 @@ st.markdown(f"""
 - **Valores extremos.** A M2 depende de {n_cb} linhas do circuit breaker de {F.data(I.DIA_CIRCUIT_BREAKER)}
   (seção 1, aba M2).
 - **Muitos testes.** Seis testes aumentam a chance de uma rejeição falsa; com Bonferroni nenhuma decisão muda.
-- **Hipóteses complementares.** P1-b e M2-b foram formuladas depois de ver os dados.
+- **Hipóteses complementares.** P1-b e M2-b foram acrescentadas depois das quatro principais, para atender à
+  segunda leitura do enunciado (duas hipóteses sobre o mesmo parâmetro), e não por causa de um resultado. Na
+  M2-b, a direção unilateral vem da literatura, não da amostra.
 - **Variáveis descritivas.** O setor é a classificação atual da B3 aplicada aos 10 anos.
 """)

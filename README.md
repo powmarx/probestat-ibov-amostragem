@@ -224,9 +224,10 @@ entre os dias com ret ≠ 0 (2.311 linhas da amostra).
 | M2-b (compl.) | O gap médio é positivo? | μ ≤ 0 / μ > 0 | 0,090% | 0,047% | limite inferior −0,010% | t = 1,37 | 0,0859 | não rejeita |
 
 - Todos os intervalos contêm o valor da população.
-- P1-b e M2-b foram formuladas depois da exploração dos dados e aparecem como complementares. A M2-b é
-  unilateral porque a literatura (Cliff, Cooper e Gulen, 2008) prevê ganho positivo entre um pregão e
-  o seguinte.
+- P1-b e M2-b foram acrescentadas depois das quatro principais para atender a uma segunda leitura do
+  enunciado (duas hipóteses sobre o mesmo parâmetro de proporção e duas sobre o mesmo parâmetro de
+  média), e aparecem como complementares. A M2-b é unilateral porque a literatura (Cliff, Cooper e
+  Gulen, 2008) prevê ganho positivo entre um pregão e o seguinte.
 - Com a correção de Bonferroni para seis testes (α = 0,83%), nenhuma decisão muda.
 - Uma simulação de 2.000 amostras de n = 2.343 (semente 1) mede o poder de cada teste e a cobertura dos
   intervalos. M1 e M2 não rejeitam embora H₀ seja falsa na população: são erros tipo II, com poder de
