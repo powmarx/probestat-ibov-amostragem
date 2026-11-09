@@ -138,7 +138,7 @@ st.dataframe(D.tabela_frequencias_comparada(D.comparar_frequencias(f, a, q), D.Q
              hide_index=True, width='stretch')
 st.caption('Erro-padrão esperado da proporção amostral: √(p(1 − p)/n) × √((N − n)/(N − 1)), com a proporção '
            'p da população.')
-for nota in (D.NOTAS_QUALITATIVAS.get(q), D.nota_sem_referencia(a, q)):
+for nota in (D.NOTAS_QUALITATIVAS.get(q), D.nota_base_faixa(a, q)):
     if nota:
         st.caption(nota)
 

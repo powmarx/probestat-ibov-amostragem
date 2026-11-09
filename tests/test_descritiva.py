@@ -48,14 +48,16 @@ def test_frequencias_ordem_e_soma(P):
     assert list(f['categoria']) == ['segunda', 'terça', 'quarta', 'quinta', 'sexta']
     assert f['n'].sum() == len(P) and f['proporcao'].sum() == pytest.approx(1)
     h = D.frequencias(P['humor_ant'], D.QUALITATIVAS['humor_ant']['ordem'])
-    assert list(h['categoria'])[-1] == D.SEM_REF
+    assert list(h['categoria']) == ['medo extremo', 'medo', 'neutro', 'ganância', 'ganância extrema']
+    assert h['n'].sum() == 79_207 and h['proporcao'].sum() == pytest.approx(1)     # só as linhas com índice
     a = D.frequencias(P['ano'])
     assert list(a['categoria']) == [str(x) for x in range(2016, 2027)]
 
 
-def test_todas_as_qualitativas_somam_n(P):
+def test_todas_as_qualitativas_somam_as_linhas_com_dado(P):
     for c, info in D.QUALITATIVAS.items():
-        assert D.frequencias(P[c], info['ordem'])['n'].sum() == len(P), c
+        assert D.frequencias(P[c], info['ordem'])['n'].sum() == (P[c] != D.SEM_REF).sum(), c
+    assert D.SEM_REF not in D.frequencias(P['faixa_volume'], D.QUALITATIVAS['faixa_volume']['ordem'])['categoria'].values
 
 
 def test_histograma_recorta_so_o_eixo(P):
@@ -81,12 +83,14 @@ def test_agitados_por_ano(P):
     assert a.loc[2024, 'proporcao'] == pytest.approx(0.267, abs=0.001)
 
 
-def test_nota_sem_referencia(P):
-    vol = D.nota_sem_referencia(P, 'faixa_volume')
-    assert '95 linhas' in vol and 'CMIN3, HAPV3, IRBR3, PCAR3 e SUZB3' in vol
-    hum = D.nota_sem_referencia(P, 'humor_ant')
-    assert '17.403 linhas (18,0%), de 31/10/2016 a 08/10/2018' in hum and 'dois anos' in hum
-    assert D.nota_sem_referencia(P, 'setor') is None
+def test_nota_base_faixa(P):
+    vol = D.nota_base_faixa(P, 'faixa_volume')
+    assert 'Proporções entre as 96.515 linhas' in vol and '20 pregões anteriores' in vol
+    hum = D.nota_base_faixa(P, 'humor_ant')
+    assert 'Proporções entre as 79.207 linhas que têm o índice (a partir de 09/10/2018)' in hum
+    assert 'Como o Fear & Greed B3 é calculado' in hum and 'sem referência' not in hum
+    assert D.nota_base_faixa(P, 'setor') is None
+    assert D.nota_base_faixa(P[P['ano'] >= 2020], 'humor_ant') is None     # todas as linhas têm o índice
 
 
 def test_dicionario_cobre_as_27_colunas():
@@ -167,7 +171,7 @@ def test_comparar_frequencias(P, A):
     for c in D.QUALITATIVAS:
         C = D.comparar_frequencias(P, A, c)
         assert C['pop'].sum() == pytest.approx(1) and C['amostra'].sum() == pytest.approx(1)
-        assert C['n_amostra'].sum() == len(A)
+        assert C['n_amostra'].sum() == (A[c] != D.SEM_REF).sum()        # só as linhas com o dado
     dia = D.comparar_frequencias(P, A, 'dia_semana').set_index('categoria')
     assert dia.loc['terça', 'z'] == pytest.approx(-2.06, abs=0.01)
     t = D.frase_frequencias(P, A)

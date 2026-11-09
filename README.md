@@ -145,17 +145,15 @@ incluídos (ver Limitações).
 
 "Dia agitado" no texto dos painéis significa \|ret\| > 2% (faixas agitado e extremo juntas).
 
-**Categoria "sem referência".** Quando não há histórico anterior suficiente, a coluna numérica fica
-vazia e a faixa correspondente recebe a categoria "sem referência", em vez de ficar vazia, para aparecer
-nas tabelas de frequência e não sumir da contagem:
+**Linhas sem histórico anterior.** `vol_rel` e `fg_ant` precisam de pregões anteriores. Quando eles ainda
+não existem, a coluna numérica fica vazia e, nos arquivos, a faixa correspondente vem marcada como
+"sem referência". Nos painéis, as frequências, os gráficos e as comparações das faixas usam só as linhas
+que têm o dado, e a nota de cada gráfico diz quantas são:
 
-| Faixa | Linhas na população | Na amostra | Motivo |
-|---|---|---|---|
-| `faixa_volume` | 95 (0,1%) | 5 | os 20 primeiros pregões das 5 ações que entram depois de 31/10/2016 não têm 20 pregões anteriores |
-| `humor_ant` | 17.403 (18,0%) | 421 | o Fear & Greed só existe a partir de 08/10/2018 (dois anos de histórico para os percentis) |
-
-Nos gráficos por faixa, as médias e proporções são calculadas sem essa categoria, e a nota do painel diz
-isso.
+| Faixa | Linhas com o dado (população) | Na amostra | Linhas sem o dado | Por quê |
+|---|---|---|---|---|
+| `faixa_volume` | 96.515 | 2.338 | 95 | as primeiras semanas das 5 ações que entram depois de 31/10/2016 ainda não têm 20 pregões anteriores |
+| `humor_ant` | 79.207 (a partir de 09/10/2018) | 1.922 | 17.403 | o Fear & Greed precisa de cerca de dois anos de cotações anteriores |
 
 **Fear & Greed B3.** Média de cinco componentes, cada um em percentil contra a própria história
 anterior: momento do Ibovespa, amplitude (ações acima da média de 50 pregões), força (perto da máxima

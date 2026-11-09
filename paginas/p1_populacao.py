@@ -68,9 +68,9 @@ coluna `conferencia_tv`.
     st.markdown('**Dicionário de variáveis**')
     st.dataframe(pd.DataFrame(D.DICIONARIO, columns=['coluna', 'tipo', 'descrição']), hide_index=True,
                  width='stretch', height=35 * (len(D.DICIONARIO) + 1) + 3)   # sem rolagem interna
-    st.caption('Quando falta histórico anterior, a coluna numérica (vol_rel, fg_ant) fica vazia e a '
-               'faixa correspondente (faixa_volume, humor_ant) recebe a categoria "sem referência", '
-               'para aparecer nas tabelas de frequência.')
+    st.caption('vol_rel e fg_ant precisam de histórico anterior: nas linhas em que ele ainda não existe, a coluna '
+               'fica vazia (e a faixa, no arquivo, "sem referência"). Os gráficos e tabelas das faixas usam só as '
+               'linhas que têm o dado, e a nota de cada um diz quantas são.')
 
 f = C.filtros(P, 'p1')
 if f.empty:
@@ -112,7 +112,7 @@ with b1:
     C.mostrar(C.grafico_barras([(f, 'População', C.COR_POP)], q), 'p1_barras')
 with b2:
     st.dataframe(C.tabela_frequencias(f, q), hide_index=True, width='stretch')
-for nota in (D.NOTAS_QUALITATIVAS.get(q), D.nota_sem_referencia(f, q)):
+for nota in (D.NOTAS_QUALITATIVAS.get(q), D.nota_base_faixa(f, q)):
     if nota:
         st.caption(nota)
 

@@ -36,9 +36,9 @@ QUALITATIVAS = {
     'direcao': {'nome': 'Direção do dia', 'ordem': ['alta', 'baixa', 'sem variação']},
     'segue_ibov': {'nome': 'Acompanha o Ibovespa', 'ordem': ['sim', 'não', 'sem variação']},
     'faixa': {'nome': 'Faixa de movimento', 'ordem': ['calmo', 'normal', 'agitado', 'extremo']},
-    'faixa_volume': {'nome': 'Faixa de volume', 'ordem': ['baixo', 'normal', 'alto', SEM_REF]},
+    'faixa_volume': {'nome': 'Faixa de volume', 'ordem': ['baixo', 'normal', 'alto']},
     'humor_ant': {'nome': 'Humor no pregão anterior (Fear & Greed B3)',
-                  'ordem': humor.ORDEM_FAIXAS + [SEM_REF]},
+                  'ordem': humor.ORDEM_FAIXAS},
 }
 
 NOTAS_QUALITATIVAS = {
@@ -116,25 +116,22 @@ def tabela_conferencia(d: pd.DataFrame) -> pd.DataFrame:
                          'proporção': [F.pct(p, 2) for p in f['proporcao']]})
 
 
-def nota_sem_referencia(d: pd.DataFrame, coluna: str) -> str | None:
-    """Explica a categoria 'sem referência' com o número de linhas da base mostrada."""
+def nota_base_faixa(d: pd.DataFrame, coluna: str) -> str | None:
+    """Diz sobre quantas linhas as proporções da faixa são calculadas e como a faixa é medida."""
     if coluna not in ('faixa_volume', 'humor_ant'):
         return None
-    s = d[d[coluna] == SEM_REF]
-    k = len(s)
-    if k == 0:
+    com = d[d[coluna] != SEM_REF]
+    if len(com) == len(d) or com.empty:
         return None
-    inicio = f'"Sem referência": {F.inteiro(k)} linhas ({F.pct(k / len(d), 1)})'
-    fim = ('Elas ganham esta categoria para continuar na contagem, em vez de sumirem do gráfico; '
-           'a coluna numérica fica vazia nessas linhas.')
+    base = f'Proporções entre as {F.inteiro(len(com))} linhas que têm {"o índice" if coluna == "humor_ant" else "o dado"}'
     if coluna == 'humor_ant':
-        return (f'{inicio}, de {F.data(s["data"].min())} a {F.data(s["data"].max())}. O Fear & Greed precisa '
-                'de cerca de dois anos de cotações anteriores para ser calculado (veja "Como o Fear & Greed B3 '
-                'é calculado", no Painel 1), então essas linhas não têm humor. ' + fim)
-    nomes = sorted(s['ativo'].unique())
-    acoes = nomes[0] if len(nomes) == 1 else ', '.join(nomes[:-1]) + ' e ' + nomes[-1]
-    return (f'{inicio}, dos primeiros pregões com negócio de {acoes}, que entram na base depois de 31/10/2016. O volume do '
-            'dia é comparado com a mediana dos 20 pregões anteriores, e essas ações ainda não tinham 20. ' + fim)
+        return (f'{base} (a partir de {F.data(com["data"].min())}). Como é medido: o Fear & Greed B3 de cada pregão '
+                'é a média de cinco componentes do mercado, cada um comparado com a própria história; ele precisa '
+                'de cerca de dois anos de cotações anteriores, por isso começa em 2018. Detalhes em "Como o Fear & '
+                'Greed B3 é calculado", na seção do humor do Painel 1.')
+    return (f'{base}. Como é medido: o volume financeiro do dia dividido pela mediana dos 20 pregões anteriores '
+            'da mesma ação; nas primeiras semanas das ações que entram na base depois de 31/10/2016 ainda não há '
+            '20 pregões para comparar.')
 
 
 # ---------------------------------------------------------------- medidas
@@ -193,7 +190,9 @@ def frase_forma(x, unidade: str, positiva: bool = False) -> str:
 
 # ---------------------------------------------------------------- frequências
 def frequencias(s: pd.Series, ordem=None) -> pd.DataFrame:
-    c = s.value_counts()
+    """Frequências das categorias. As linhas sem histórico anterior (valor 'sem referência' no arquivo, em
+    faixa_volume e humor_ant) não entram: as proporções são entre as linhas que têm o dado."""
+    c = s[s != SEM_REF].value_counts()
     if ordem:
         cats = [o for o in ordem if o in c.index] + [o for o in c.index if o not in ordem]
         c = c.reindex(cats)
@@ -304,7 +303,7 @@ def comparar_frequencias(P: pd.DataFrame, A: pd.DataFrame, coluna: str) -> pd.Da
     ordem = QUALITATIVAS[coluna]['ordem']
     fp = frequencias(P[coluna], ordem).set_index('categoria')
     fa = frequencias(A[coluna], ordem).set_index('categoria').reindex(fp.index).fillna(0)
-    n, N = len(A), len(P)
+    n, N = int(fa['n'].sum()), int(fp['n'].sum())          # linhas com o dado em cada uma
     p = fp['proporcao']
     ep = np.sqrt(p * (1 - p) / n) * _fpc(n, N)
     out = pd.DataFrame({'categoria': fp.index, 'pop': p.values, 'amostra': fa['proporcao'].values,
@@ -514,8 +513,8 @@ média dos cinco percentis, e as faixas são: medo extremo (0–25), medo (25–
 **Por que só existe a partir de 08/10/2018.** São duas esperas de cerca de um ano cada. Alguns componentes
 olham 252 pregões para trás (a máxima e a mínima do ano, a volatilidade de 252 pregões); como as cotações
 congeladas começam em 26/09/2016, eles só ficam completos por volta de outubro de 2017. Depois, o percentil
-exige pelo menos 252 dias anteriores de cada componente para comparar. As linhas antes disso ficam na
-categoria "sem referência".
+exige pelo menos 252 dias anteriores de cada componente para comparar. As linhas antes disso não têm
+humor e ficam fora dos gráficos e tabelas por faixa.
 
 **Como entra neste trabalho.** A coluna `fg_ant` é o índice do **pregão anterior**: o índice de hoje usa os
 preços de hoje, e compará-lo com o retorno de hoje seria circular. Ele é só descritivo e não entra nas
@@ -527,6 +526,6 @@ percentil compara com pouco histórico.
 NOTA_HUMOR = ('Descritivo, sem teste de hipótese. Fear & Greed B3: índice construído no trabalho anterior do curso, '
               'não oficial, com as mesmas 40 ações (o humor de ontem inclui a própria ação). Usa o pregão anterior, '
               'porque o índice do dia é calculado com os preços do próprio dia. Só existe a partir de 08/10/2018 '
-              '(as linhas "sem referência" ficam fora destas barras), e nos primeiros meses o percentil compara com '
+              '(as linhas anteriores ficam fora destas barras), e nos primeiros meses o percentil compara com '
               'pouco histórico. Parte da relação com a agitação é mecânica: um dos componentes é a volatilidade '
               'recente, e a volatilidade tende a continuar.')
