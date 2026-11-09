@@ -2,7 +2,6 @@
 import pandas as pd
 import streamlit as st
 
-import amostra as AM
 import comum as C
 import descritiva as D
 import formato as F
@@ -48,31 +47,7 @@ st.markdown(
     f'(1 + {F.inteiro(n0_r - 1)} / {F.inteiro(N)}) = {F.num(n0_r / (1 + (n0_r - 1) / N), 1)}, arredondado '
     f'para cima: **n = {F.inteiro(dim["n"])}**.')
 
-with st.expander('Calculadora: mude os parâmetros e veja o n mudar', icon=':material/calculate:',
-                 expanded=False):
-    c1, c2, c3 = st.columns(3)
-    conf = c1.radio('Nível de confiança', [95, 99], format_func=lambda v: f'{v}%', horizontal=True,
-                    key='p2_conf')
-    erro = c1.number_input('Margem de erro (pontos percentuais)', 0.5, 10.0, 2.0, 0.1, key='p2_erro')
-    prop = c2.number_input('Proporção esperada (%)', 1.0, 99.0, 50.0, 1.0, key='p2_prop')
-    n_pop = c2.number_input('Tamanho da população (N)', 100, 10_000_000, N, 1000, key='p2_N')
-    efeito = c3.number_input('Efeito do desenho', 1.0, 5.0, 1.0, 0.1, key='p2_efeito')
-    perda = c3.number_input('Perda (%)', 0.0, 50.0, 0.0, 1.0, key='p2_perda')
-    t = AM.tamanho(int(n_pop), conf, erro, prop, efeito, perda)
-    p_ = prop / 100
-    st.markdown(f"""
-- z = **{F.num(t["z"], 3)}** ({conf}% de confiança)
-- n₀ = z² · p · (1 − p) / e² = {F.num(t["z"], 3)}² × {F.num(p_, 2)} × {F.num(1 - p_, 2)} / {F.num(erro / 100, 3)}² = **{F.num(t["n0"], 1)}**
-- correção finita: n₀ / (1 + (n₀ − 1) / N) = **{F.num(t["n_finita_exato"], 1)}**
-- × efeito do desenho ({F.num(efeito, 1)}) ÷ (1 − perda de {F.num(perda, 0)}%) e arredondado para cima: **n = {F.inteiro(t["n"])}**
-""")
-    if t['n'] == dim['n'] and int(n_pop) == N:
-        st.success(f'Com os parâmetros do trabalho, a calculadora dá n = {F.inteiro(dim["n"])}, o tamanho usado.',
-                   icon=':material/check_circle:')
-    else:
-        st.info(f'Com estes parâmetros, n = {F.inteiro(t["n"])}. O trabalho usa n = {F.inteiro(dim["n"])} '
-                '(os valores padrão desta calculadora).', icon=':material/info:')
-    st.caption('O script usa z = 1,959964 (n₀ = 2.400,9); com z arredondado para 1,96 a conta dá o mesmo n.')
+st.caption('O script usa z = 1,959964 (n₀ = 2.400,9); com z arredondado para 1,96 a conta dá o mesmo n.')
 
 k = int((A['ret'] != 0).sum())
 st.caption(

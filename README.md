@@ -22,7 +22,7 @@ acordá-lo; o primeiro acesso pode levar cerca de 30 segundos.
 
 1. **População.** A base completa: fonte, construção, dicionário de variáveis, medidas resumo,
    histogramas, boxplots, frequências e os gráficos extras de volume, concentração e humor do mercado.
-2. **Amostra.** Cálculo do tamanho da amostra (com calculadora), o sorteio, a comparação
+2. **Amostra.** Cálculo do tamanho da amostra, o sorteio, a comparação
    amostra × população em erros-padrão e os QQ-plots.
 3. **Inferência e comparação.** Seis hipóteses (quatro principais e duas complementares), cada uma com
    IC, estatística de teste, valor-p e o valor da população ao lado; o quadro decisão × verdade, uma

@@ -94,15 +94,6 @@ def test_painel2_abre(p2):
     assert p2.title[0].value.startswith('Painel 2')
     assert [m.value for m in p2.metric][:2] == ['2.343', '2,43%']
     assert any('n = 2.343' in m.value for m in p2.markdown)
-    assert any('o tamanho usado' in s.value for s in p2.success)          # calculadora no padrão
-
-
-def test_painel2_calculadora(p2):
-    p2.number_input(key='p2_erro').set_value(3.0).run()
-    assert not p2.exception
-    assert any('Com estes parâmetros, n = ' in i.value for i in p2.info)
-    p2.radio(key='p2_conf').set_value(99).run()
-    assert not p2.exception
 
 
 def test_painel2_todas_as_variaveis_e_filtros(p2):

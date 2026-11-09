@@ -134,7 +134,7 @@ def test_casos_conhecidos(P):
 def test_tamanho_da_amostra():
     t = AM.tamanho(96_610)
     assert round(t['n0'], 1) == 2400.9 and t['n'] == 2343
-    assert AM.tamanho(96_610, confianca=99)['n'] > t['n']          # calculadora: mais confiança, maior n
+    assert AM.tamanho(96_610, confianca=99)['n'] > t['n']          # mais confiança, maior n
     assert round(t['n_finita_exato'], 2) == 2342.72          # n0 / (1 + (n0 − 1)/N)
 
 
