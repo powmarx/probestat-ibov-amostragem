@@ -112,7 +112,7 @@ with b1:
     C.mostrar(C.grafico_barras([(f, 'População', C.COR_POP)], q), 'p1_barras')
 with b2:
     st.dataframe(C.tabela_frequencias(f, q), hide_index=True, width='stretch')
-for nota in (D.NOTAS_QUALITATIVAS.get(q), D.nota_base_faixa(f, q)):
+for nota in (D.NOTAS_QUALITATIVAS.get(q), D.nota_base_faixa(f, q, C.LINK_HUMOR_P1)):
     if nota:
         st.caption(nota)
 
@@ -157,7 +157,7 @@ with c2:
 st.markdown(D.frase_concentracao(conc))
 st.caption(D.NOTA_CONCENTRACAO)
 
-st.subheader('O humor de ontem não diz para onde a ação vai, mas diz quanto ela se mexe')
+st.subheader('O humor de ontem não diz para onde a ação vai, mas diz quanto ela se mexe', anchor=C.ANCORA_HUMOR)
 with st.expander('Como o Fear & Greed B3 é calculado', icon=':material/psychology:'):
     st.markdown(D.EXPLICACAO_HUMOR)
 if (f['humor_ant'] != D.SEM_REF).any():

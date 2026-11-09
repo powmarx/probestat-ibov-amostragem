@@ -116,8 +116,11 @@ def tabela_conferencia(d: pd.DataFrame) -> pd.DataFrame:
                          'proporção': [F.pct(p, 2) for p in f['proporcao']]})
 
 
-def nota_base_faixa(d: pd.DataFrame, coluna: str) -> str | None:
-    """Diz sobre quantas linhas as proporções da faixa são calculadas e como a faixa é medida."""
+def nota_base_faixa(d: pd.DataFrame, coluna: str,
+                    onde: str = '"Como o Fear & Greed B3 é calculado", na seção do humor do Painel 1') -> str | None:
+    """Diz sobre quantas linhas as proporções da faixa são calculadas e como a faixa é medida.
+
+    `onde`: onde está a explicação completa do índice (a página passa um link em markdown)."""
     if coluna not in ('faixa_volume', 'humor_ant'):
         return None
     com = d[d[coluna] != SEM_REF]
@@ -127,8 +130,7 @@ def nota_base_faixa(d: pd.DataFrame, coluna: str) -> str | None:
     if coluna == 'humor_ant':
         return (f'{base} (a partir de {F.data(com["data"].min())}). Como é medido: o Fear & Greed B3 de cada pregão '
                 'é a média de cinco componentes do mercado, cada um comparado com a própria história; ele precisa '
-                'de cerca de dois anos de cotações anteriores, por isso começa em 2018. Detalhes em "Como o Fear & '
-                'Greed B3 é calculado", na seção do humor do Painel 1.')
+                f'de cerca de dois anos de cotações anteriores, por isso começa em 2018. Detalhes em {onde}.')
     return (f'{base}. Como é medido: o volume financeiro do dia dividido pela mediana dos 20 pregões anteriores '
             'da mesma ação; nas primeiras semanas das ações que entram na base depois de 31/10/2016 ainda não há '
             '20 pregões para comparar.')

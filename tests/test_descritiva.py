@@ -89,6 +89,9 @@ def test_nota_base_faixa(P):
     hum = D.nota_base_faixa(P, 'humor_ant')
     assert 'Proporções entre as 79.207 linhas que têm o índice (a partir de 09/10/2018)' in hum
     assert 'Como o Fear & Greed B3 é calculado' in hum and 'sem referência' not in hum
+    import comum as C
+    assert '](#humor)' in D.nota_base_faixa(P, 'humor_ant', C.LINK_HUMOR_P1)       # link para a explicação
+    assert '](./#humor)' in D.nota_base_faixa(P, 'humor_ant', C.LINK_HUMOR_P2)
     assert D.nota_base_faixa(P, 'setor') is None
     assert D.nota_base_faixa(P[P['ano'] >= 2020], 'humor_ant') is None     # todas as linhas têm o índice
 

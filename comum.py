@@ -31,6 +31,11 @@ FONTE_B3 = ('https://www.b3.com.br/pt_br/produtos-e-servicos/negociacao/renda-va
 REPO = 'https://github.com/powmarx/probestat-ibov-amostragem'
 ZIP_POPULACAO = f'{REPO}/raw/main/dados/populacao.zip'
 DOC_TV = f'{REPO}/blob/main/docs/conferencia_tradingview.md'
+# âncora da seção do humor no Painel 1 (onde fica o quadro "Como o Fear & Greed B3 é calculado").
+# Links relativos ("./#…"): funcionam no servidor local e dentro do Streamlit Cloud.
+ANCORA_HUMOR = 'humor'
+LINK_HUMOR_P1 = f'[Como o Fear & Greed B3 é calculado](#{ANCORA_HUMOR}), na seção do humor, mais abaixo nesta página'
+LINK_HUMOR_P2 = f'[Como o Fear & Greed B3 é calculado](./#{ANCORA_HUMOR}), na seção do humor do Painel 1'
 CONFIG_PLOTLY = {'displayModeBar': False}
 
 
