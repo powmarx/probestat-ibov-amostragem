@@ -1,6 +1,7 @@
 """Fear & Greed B3 diário: o "humor" do mercado, de 0 (medo extremo) a 100 (ganância extrema).
 
-Cópia do cálculo diário do trabalho anterior ("Análise Ibovespa — Volume, Volatilidade e Top 3",
+Cópia do cálculo diário do trabalho final da disciplina IA001 - Análise e Visualização de Dados com
+Python e Ferramentas Assistidas por IA ("Análise Ibovespa — Volume, Volatilidade e Top 3",
 Visualizacao/trabalho_final/sentimento.py), sem mudanças no método. Copiado para este projeto não
 depender da pasta antiga.
 

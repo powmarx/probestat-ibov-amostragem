@@ -157,9 +157,9 @@ que têm o dado, e a nota de cada gráfico diz quantas são:
 
 **Fear & Greed B3.** Média de cinco componentes, cada um em percentil contra a própria história
 anterior: momento do Ibovespa, amplitude (ações acima da média de 50 pregões), força (perto da máxima
-menos perto da mínima de 252 pregões), volume direcional e volatilidade invertida. O método vem de um
-trabalho anterior do autor no curso (Visualização de Dados) e está copiado em `humor.py`; não é um índice
-oficial da B3. Só existe a partir de 08/10/2018 porque precisa de duas esperas de cerca de um ano: alguns
+menos perto da mínima de 252 pregões), volume direcional e volatilidade invertida. O método vem do trabalho
+do autor na disciplina IA001 - Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA,
+do mesmo curso, e está copiado em `humor.py`; não é um índice oficial da B3. Só existe a partir de 08/10/2018 porque precisa de duas esperas de cerca de um ano: alguns
 componentes olham 252 pregões para trás, e o percentil exige pelo menos 252 dias anteriores. Entra com um
 pregão de defasagem porque o índice do dia usa os preços do próprio dia. O Painel 1 explica cada
 componente em "Como o Fear & Greed B3 é calculado". `vol_rel`, `faixa_volume`,

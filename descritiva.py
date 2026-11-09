@@ -493,7 +493,7 @@ NOTA_CONCENTRACAO = ('Descritivo. Volume não é peso no índice: o peso no Ibov
 EXPLICACAO_HUMOR = """
 **O que é.** Um termômetro do humor do mercado, de 0 (medo extremo) a 100 (ganância extrema), calculado para
 cada pregão com o Ibovespa e as mesmas 40 ações desta base. A ideia vem do Fear & Greed Index da CNN, feito
-para o mercado americano. Esta versão foi construída num trabalho anterior do curso e **não é um índice
+para o mercado americano. Esta versão foi construída na disciplina IA001 - Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA e **não é um índice
 oficial da B3**; o código está em `humor.py`.
 
 **Cinco componentes**, cada um responde a uma pergunta simples sobre o mercado:
@@ -525,7 +525,7 @@ volatilidade recente, então parte da relação com os dias agitados é mecânic
 percentil compara com pouco histórico.
 """
 
-NOTA_HUMOR = ('Descritivo, sem teste de hipótese. Fear & Greed B3: índice construído no trabalho anterior do curso, '
+NOTA_HUMOR = ('Descritivo, sem teste de hipótese. Fear & Greed B3: índice construído na disciplina IA001 - Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA, '
               'não oficial, com as mesmas 40 ações (o humor de ontem inclui a própria ação). Usa o pregão anterior, '
               'porque o índice do dia é calculado com os preços do próprio dia. Só existe a partir de 08/10/2018 '
               '(as linhas anteriores ficam fora destas barras), e nos primeiros meses o percentil compara com '
