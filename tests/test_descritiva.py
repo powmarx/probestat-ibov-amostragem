@@ -82,8 +82,10 @@ def test_agitados_por_ano(P):
 
 
 def test_nota_sem_referencia(P):
-    assert '95 linhas' in D.nota_sem_referencia(P, 'faixa_volume')
-    assert '17.403 linhas' in D.nota_sem_referencia(P, 'humor_ant')
+    vol = D.nota_sem_referencia(P, 'faixa_volume')
+    assert '95 linhas' in vol and 'CMIN3, HAPV3, IRBR3, PCAR3 e SUZB3' in vol
+    hum = D.nota_sem_referencia(P, 'humor_ant')
+    assert '17.403 linhas (18,0%), de 31/10/2016 a 08/10/2018' in hum and 'dois anos' in hum
     assert D.nota_sem_referencia(P, 'setor') is None
 
 

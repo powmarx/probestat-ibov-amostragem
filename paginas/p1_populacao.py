@@ -158,6 +158,8 @@ st.markdown(D.frase_concentracao(conc))
 st.caption(D.NOTA_CONCENTRACAO)
 
 st.subheader('O humor de ontem não diz para onde a ação vai, mas diz quanto ela se mexe')
+with st.expander('Como o Fear & Greed B3 é calculado', icon=':material/psychology:'):
+    st.markdown(D.EXPLICACAO_HUMOR)
 if (f['humor_ant'] != D.SEM_REF).any():
     h1, h2 = st.columns(2)
     ha, hb = C.graficos_humor(pop)

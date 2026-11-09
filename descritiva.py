@@ -120,16 +120,21 @@ def nota_sem_referencia(d: pd.DataFrame, coluna: str) -> str | None:
     """Explica a categoria 'sem referência' com o número de linhas da base mostrada."""
     if coluna not in ('faixa_volume', 'humor_ant'):
         return None
-    k = int((d[coluna] == SEM_REF).sum())
+    s = d[d[coluna] == SEM_REF]
+    k = len(s)
     if k == 0:
         return None
-    motivo = ('os primeiros 20 pregões das ações que entram na base depois de 31/10/2016 não têm 20 '
-              'pregões anteriores para a referência do volume'
-              if coluna == 'faixa_volume' else
-              'o Fear & Greed B3 só existe a partir de 08/10/2018 (precisa de dois anos de histórico)')
-    return (f'"Sem referência": {F.inteiro(k)} linhas ({F.pct(k / len(d), 1)}), porque {motivo}. '
-            'A coluna numérica fica vazia nessas linhas; a faixa ganha esta categoria para não sumir '
-            'da contagem.')
+    inicio = f'"Sem referência": {F.inteiro(k)} linhas ({F.pct(k / len(d), 1)})'
+    fim = ('Elas ganham esta categoria para continuar na contagem, em vez de sumirem do gráfico; '
+           'a coluna numérica fica vazia nessas linhas.')
+    if coluna == 'humor_ant':
+        return (f'{inicio}, de {F.data(s["data"].min())} a {F.data(s["data"].max())}. O Fear & Greed precisa '
+                'de cerca de dois anos de cotações anteriores para ser calculado (veja "Como o Fear & Greed B3 '
+                'é calculado", no Painel 1), então essas linhas não têm humor. ' + fim)
+    nomes = sorted(s['ativo'].unique())
+    acoes = nomes[0] if len(nomes) == 1 else ', '.join(nomes[:-1]) + ' e ' + nomes[-1]
+    return (f'{inicio}, dos primeiros pregões com negócio de {acoes}, que entram na base depois de 31/10/2016. O volume do '
+            'dia é comparado com a mediana dos 20 pregões anteriores, e essas ações ainda não tinham 20. ' + fim)
 
 
 # ---------------------------------------------------------------- medidas
@@ -484,6 +489,41 @@ NOTA_VOLUME = ('Descritivo, sem teste de hipótese. É associação, não causa:
 NOTA_CONCENTRACAO = ('Descritivo. Volume não é peso no índice: o peso no Ibovespa vem do valor de mercado das ações em '
                      'circulação, que a base não tem, e estas são 40 das cerca de 85 ações do índice. Por isso o '
                      'título fala em concentração do volume, não do índice.')
+EXPLICACAO_HUMOR = """
+**O que é.** Um termômetro do humor do mercado, de 0 (medo extremo) a 100 (ganância extrema), calculado para
+cada pregão com o Ibovespa e as mesmas 40 ações desta base. A ideia vem do Fear & Greed Index da CNN, feito
+para o mercado americano. Esta versão foi construída num trabalho anterior do curso e **não é um índice
+oficial da B3**; o código está em `humor.py`.
+
+**Cinco componentes**, cada um responde a uma pergunta simples sobre o mercado:
+
+| Componente | Pergunta | Como é medido | Puxa para a ganância quando |
+|---|---|---|---|
+| Momento | O Ibovespa está acima da sua média recente? | Ibovespa ÷ média dos últimos 125 pregões − 1 | está bem acima da média |
+| Amplitude | Quantas ações estão em alta de médio prazo? | % das ações com fechamento acima da própria média de 50 pregões | muitas ações estão acima |
+| Força | Há mais ações perto da máxima do ano ou da mínima? | % das ações a até 2% da máxima de 252 pregões − % a até 2% da mínima | mais ações perto da máxima |
+| Volume direcional | O dinheiro está entrando nos dias de alta? | fatia do volume dos últimos 10 pregões negociada em dias de alta de cada ação | a fatia é grande |
+| Volatilidade | O mercado está mais nervoso que o normal? | desvio dos retornos do Ibovespa em 20 pregões ÷ desvio em 252 pregões, com o sinal invertido | o mercado está calmo |
+
+**De cada componente a um número de 0 a 100.** O valor do dia é comparado com **todos os dias anteriores**
+do mesmo componente e vira um percentil: 80 quer dizer que o valor de hoje é maior que o de 80% dos dias
+anteriores. Isso põe componentes com unidades diferentes na mesma escala, e só usa o passado. O índice é a
+média dos cinco percentis, e as faixas são: medo extremo (0–25), medo (25–45), neutro (45–55), ganância
+(55–75) e ganância extrema (75–100).
+
+**Por que só existe a partir de 08/10/2018.** São duas esperas de cerca de um ano cada. Alguns componentes
+olham 252 pregões para trás (a máxima e a mínima do ano, a volatilidade de 252 pregões); como as cotações
+congeladas começam em 26/09/2016, eles só ficam completos por volta de outubro de 2017. Depois, o percentil
+exige pelo menos 252 dias anteriores de cada componente para comparar. As linhas antes disso ficam na
+categoria "sem referência".
+
+**Como entra neste trabalho.** A coluna `fg_ant` é o índice do **pregão anterior**: o índice de hoje usa os
+preços de hoje, e compará-lo com o retorno de hoje seria circular. Ele é só descritivo e não entra nas
+hipóteses. Cuidados na leitura: o índice inclui a própria ação analisada; um dos componentes é a
+volatilidade recente, então parte da relação com os dias agitados é mecânica; e nos primeiros meses o
+percentil compara com pouco histórico.
+"""
+
 NOTA_HUMOR = ('Descritivo, sem teste de hipótese. Fear & Greed B3: índice construído no trabalho anterior do curso, '
               'não oficial, com as mesmas 40 ações (o humor de ontem inclui a própria ação). Usa o pregão anterior, '
               'porque o índice do dia é calculado com os preços do próprio dia. Só existe a partir de 08/10/2018 '
