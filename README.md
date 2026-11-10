@@ -34,6 +34,10 @@ acordá-lo; o primeiro acesso pode levar cerca de 30 segundos.
   fechamento e volume) das 40 ações listadas abaixo e do Ibovespa, obtidas pela API pública de gráficos
   `https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}.SA?interval=1d&range=10y`. Cada ação tem
   sua página de histórico (links na tabela).
+- **As 40 ações:** são as que o coletor de dados do autor acompanha, montado na disciplina IA001 –
+  Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA: 16 componentes do Ibovespa
+  com liquidez variada, escolhidas nas primeiras atividades da disciplina, e 24 ações de liquidez
+  intermediária e baixa, acrescentadas na terceira atividade, em 2026. Não são as mais negociadas da bolsa.
 - **Setor:** [B3, Classificação setorial](https://www.b3.com.br/pt_br/produtos-e-servicos/negociacao/renda-variavel/acoes/consultas/classificacao-setorial/),
   consultada em 31/10/2026 pela API de empresas listadas que essa página usa. A resposta está em
   `dados/b3_classificacao_setorial.json`.
@@ -157,10 +161,12 @@ que têm o dado, e a nota de cada gráfico diz quantas são:
 
 **Fear & Greed B3.** Média de cinco componentes, cada um em percentil contra a própria história
 anterior: momento do Ibovespa, amplitude (ações acima da média de 50 pregões), força (perto da máxima
-menos perto da mínima de 252 pregões), volume direcional e volatilidade invertida. O método vem do trabalho
-do autor na disciplina IA001 - Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA,
-do mesmo curso, e está copiado em `humor.py`; não é um índice oficial da B3. Só existe a partir de 08/10/2018 porque precisa de duas esperas de cerca de um ano: alguns
-componentes olham 252 pregões para trás, e o percentil exige pelo menos 252 dias anteriores. Entra com um
+menos perto da mínima de 252 pregões), volume direcional e volatilidade invertida. A ideia vem do Fear &
+Greed Index da CNN, feito para o mercado americano. O método vem do trabalho do autor na disciplina IA001 –
+Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA, do mesmo curso, e está copiado
+em `humor.py`; não é um índice oficial da B3. Só existe a partir de 08/10/2018 porque precisa de duas
+esperas de cerca de um ano: alguns componentes olham 252 pregões para trás, e o percentil exige pelo menos
+252 dias anteriores. Entra com um
 pregão de defasagem porque o índice do dia usa os preços do próprio dia. O Painel 1 explica cada
 componente em "Como o Fear & Greed B3 é calculado". `vol_rel`, `faixa_volume`,
 `fg_ant` e `humor_ant` são só descritivas e não entram nos testes.
@@ -179,8 +185,8 @@ preço ajustado de cada fonte. As regras valem na ordem da tabela:
 | diferença até 5 p.p. | fica como no Yahoo | 1.694 |
 | corrigido pelo TradingView | diferença > 5 p.p.: a linha recebe os preços do TradingView | 19 |
 
-Nenhuma das 19 linhas corrigidas está na amostra. Os extremos reais (circuit breaker de 26/10/2026,
-março de 2020) foram mantidos e são confirmados pelas duas fontes. A justificativa do limite, a lista das
+Nenhuma das 19 linhas corrigidas está na amostra. Os valores extremos que são idênticos nas duas fontes
+(circuit breaker de 26/10/2026, março de 2020) foram mantidos. A justificativa do limite, a lista das
 linhas corrigidas e a sensibilidade a outros limites estão em
 [`docs/conferencia_tradingview.md`](docs/conferencia_tradingview.md); a comparação linha a linha está em
 `dados/conferencia_tradingview.parquet`.
@@ -224,15 +230,19 @@ entre os dias com ret ≠ 0 (2.311 linhas da amostra).
 | P1-b (compl.) | Segue o índice em mais de 2/3 dos dias? | p ≤ 2/3 / p > 2/3 | 69,46% | 69,15% | [67,26%; 71,03%] | z = 2,53 | 0,0057 | rejeita H₀ |
 | M2-b (compl.) | O gap médio é positivo? | μ ≤ 0 / μ > 0 | 0,090% | 0,047% | limite inferior −0,010% | t = 1,37 | 0,0859 | não rejeita |
 
-- Todos os intervalos contêm o valor da população.
+- Os 4 intervalos distintos (P1 e P1-b usam o mesmo, assim como M2 e M2-b) contêm o valor da população.
 - P1-b e M2-b foram acrescentadas depois das quatro principais para atender a uma segunda leitura do
   enunciado (duas hipóteses sobre o mesmo parâmetro de proporção e duas sobre o mesmo parâmetro de
-  média), e aparecem como complementares. A M2-b é unilateral porque a literatura (Cliff, Cooper e
-  Gulen, 2008) prevê ganho positivo entre um pregão e o seguinte.
+  média), e aparecem como complementares. O valor 2/3 da P1-b é um valor redondo, sem base teórica,
+  escolhido para mostrar que a conclusão depende do valor testado. A M2-b é unilateral porque Cliff,
+  Cooper e Gulen (2008) documentam, nas ações americanas, retornos maiores do fechamento à abertura
+  seguinte do que durante o pregão.
 - Com a correção de Bonferroni para seis testes (α = 0,83%), nenhuma decisão muda.
-- Uma simulação de 2.000 amostras de n = 2.343 (semente 1) mede o poder de cada teste e a cobertura dos
-  intervalos. M1 e M2 não rejeitam embora H₀ seja falsa na população: são erros tipo II, com poder de
-  ~15% na M1 e ~79% na M2. Na M2, três linhas do circuit breaker de 26/10/2026 (gaps de −40,3%, −20,6% e
+- Na população, nenhuma H₀ é verdadeira: o valor de H₀ não coincide com o parâmetro calculado nas
+  96.610 linhas. Uma simulação de 2.000 amostras de n = 2.343 (semente 1) mede o poder de cada teste e a
+  cobertura dos intervalos. P2, M1, M2 e M2-b não rejeitam: são erros tipo II. Na P2 o erro é
+  inevitável, porque a população fica a só 0,14 p.p. de 50% e o poder (5,35%) é praticamente igual a α;
+  na M1 o poder é de 14,75% e na M2 de 78,65%. Na M2, três linhas do circuit breaker de 26/10/2026 (gaps de −40,3%, −20,6% e
   −14,3%) puxam a média da amostra para baixo; o Painel 3 mostra essa sensibilidade sem trocar o
   resultado oficial.
 
@@ -284,14 +294,16 @@ python -m pytest             # 75 testes
 
 ## Limitações
 
-- **População restrita.** São 40 ações escolhidas pela liquidez atual, de 31/10/2016 a 30/10/2026. As
+- **População restrita.** São as 40 ações que o coletor do autor acompanha (16 componentes do Ibovespa
+  e 24 de liquidez intermediária e baixa, escolhidas em 2026), de 31/10/2016 a 30/10/2026. As
   conclusões valem para esta população, não para a bolsa inteira nem para outros períodos (viés de
-  sobrevivência).
+  sobrevivência: a escolha foi feita em 2026, entre ações ainda negociadas).
 - **Dependência entre linhas.** Ações do mesmo dia andam juntas. A inferência continua válida porque
   vem do sorteio (AAS de população finita, n/N = 2,4%), e a simulação confirma a cobertura de ~95%.
-- **Dividendos.** Os retornos não incluem dividendos e JCP, que fazem o preço cair na data-ex (~1% das
-  linhas). Pela estimativa feita na exploração, isso subestima o retorno e o gap médios em cerca de
-  0,01 p.p., pouco perto das margens dos intervalos (±0,12 e ±0,07 p.p.).
+- **Dividendos.** Os retornos não incluem dividendos e JCP, que fazem o preço cair na data-ex; por isso
+  o retorno e o gap médios ficam um pouco subestimados. O tamanho desse efeito não foi medido: exigiria
+  uma fonte de proventos com data-ex, valor e separação entre dividendos e JCP, que esta base não tem, e
+  a qualidade desses dados no Yahoo não foi conferida.
 - **Qualidade da fonte.** A base do Yahoo foi conferida com o TradingView (98,1% das linhas idênticas);
   1.694 linhas com diferenças de até 5 p.p. ficaram como no Yahoo.
 - **Valores extremos.** O resultado da M2 depende de três linhas do circuit breaker de 26/10/2026.
@@ -304,4 +316,6 @@ python -m pytest             # 75 testes
 - Bolfarine, H.; Bussab, W. O. *Elementos de Amostragem*. São Paulo: Blucher, 2005.
 - Cochran, W. G. *Sampling Techniques*. 3. ed. New York: Wiley, 1977.
 - Cliff, M.; Cooper, M. J.; Gulen, H. Return differences between trading and non-trading hours: like
-  night and day. SSRN Working Paper, 2008.
+  night and day. SSRN Working Paper, set. 2008. Disponível em:
+  <https://papers.ssrn.com/sol3/Papers.cfm?abstract_id=1004081>.
+- Fama, E. F. The behavior of stock-market prices. *The Journal of Business*, v. 38, n. 1, p. 34–105, 1965.

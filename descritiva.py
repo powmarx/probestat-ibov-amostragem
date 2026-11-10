@@ -418,7 +418,8 @@ def frase_volume(T: pd.DataFrame, corr: dict) -> str:
             f'própria ação), o movimento médio é {F.num(a["absret"], 2)}% e {F.pct(a["agitados"], 0)} dos dias são '
             f'agitados; nos de volume mais alto (10º decil, {F.num(z["vol_mediano"], 2)} vezes o normal), '
             f'{F.num(z["absret"], 2)}% e {F.pct(z["agitados"], 0)}. A relação cresce de forma regular '
-            f'(Spearman {F.num(corr["relativo"], 2)}). Com o volume bruto ela quase some '
+            f'(Spearman {F.num(corr["relativo"], 2)}; a correlação de Spearman compara as posições dos valores '
+            'e vai de −1 a 1). Com o volume bruto ela quase some '
             f'(Spearman {F.num(corr["bruto"], 2)}), porque as maiores ações negociam muito todos os dias.')
 
 
@@ -488,13 +489,14 @@ NOTA_VOLUME = ('Descritivo, sem teste de hipótese. É associação, não causa:
                'o volume alto e o movimento grande. Volume relativo = volume financeiro do dia ÷ mediana dos 20 '
                'pregões anteriores da mesma ação; as linhas sem 20 pregões anteriores ficam fora.')
 NOTA_CONCENTRACAO = ('Descritivo. Volume não é peso no índice: o peso no Ibovespa vem do valor de mercado das ações em '
-                     'circulação, que a base não tem, e estas são 40 das cerca de 85 ações do índice. Por isso o '
+                     'circulação, que a base não tem; além disso, nem todas as 40 ações estão na carteira atual do '
+                     'índice, e ele tem outras ações que não estão nesta base. Por isso o '
                      'título fala em concentração do volume, não do índice.')
 EXPLICACAO_HUMOR = """
 **O que é.** Um termômetro do humor do mercado, de 0 (medo extremo) a 100 (ganância extrema), calculado para
 cada pregão com o Ibovespa e as mesmas 40 ações desta base. A ideia vem do Fear & Greed Index da CNN, feito
-para o mercado americano. Esta versão foi construída na disciplina IA001 - Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA e **não é um índice
-oficial da B3**; o código está em `humor.py`.
+para o mercado americano. Esta versão foi construída na disciplina IA001 – Análise e Visualização de Dados
+com Python e Ferramentas Assistidas por IA e **não é um índice oficial da B3**; o código está em `humor.py`.
 
 **Cinco componentes**, cada um responde a uma pergunta simples sobre o mercado:
 
@@ -525,7 +527,8 @@ volatilidade recente, então parte da relação com os dias agitados é mecânic
 percentil compara com pouco histórico.
 """
 
-NOTA_HUMOR = ('Descritivo, sem teste de hipótese. Fear & Greed B3: índice construído na disciplina IA001 - Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA, '
+NOTA_HUMOR = ('Descritivo, sem teste de hipótese. Fear & Greed B3: índice construído na disciplina IA001 – '
+              'Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA, '
               'não oficial, com as mesmas 40 ações (o humor de ontem inclui a própria ação). Usa o pregão anterior, '
               'porque o índice do dia é calculado com os preços do próprio dia. Só existe a partir de 08/10/2018 '
               '(as linhas anteriores ficam fora destas barras), e nos primeiros meses o percentil compara com '

@@ -11,6 +11,9 @@ P = C.populacao()
 A = C.amostra()
 N, n = len(P), len(A)
 
+# cinco cartões lado a lado em cada aba: valores um pouco menores, para nenhum ser cortado com "…"
+st.html('<style>[data-testid="stMetricValue"] { font-size: 1.75rem !important; }</style>')
+
 
 @st.cache_data(show_spinner='Sorteando 2.000 amostras da população (alguns segundos)...')
 def _simulacao(versao: float, n: int) -> dict:
@@ -87,28 +90,31 @@ for aba, l in zip(abas, linhas):
             # tabelas estáticas dentro das abas: a tabela interativa não calcula a largura em aba escondida
             st.table(pd.DataFrame({'condição': [c['condicao'] for c in cond],
                                    'valor': [c['valor'] for c in cond],
-                                   'atendida': ['sim' if c['ok'] else 'não' for c in cond]}).set_index('condição'))
+                                   'atendida': ['—' if c['ok'] is None else 'sim' if c['ok'] else 'não'
+                                                for c in cond]}).set_index('condição'))
             if h.tipo == 'media':
-                st.caption(f'Os valores têm caudas pesadas, mas com n ≥ 30 (aqui, {F.inteiro(r.n)}) o Teorema '
-                           'Central do Limite torna a média amostral aproximadamente normal. Os QQ-plots estão no '
-                           'Painel 2.')
+                st.caption(f'Os valores têm caudas pesadas. Com n = {F.inteiro(r.n)}, o Teorema Central do Limite '
+                           'faz a média amostral ficar aproximadamente normal, mas a regra "n ≥ 30" sozinha não '
+                           'garante isso com caudas tão pesadas. A evidência é a simulação da seção 3: o intervalo t '
+                           f'cobre a média da população em {F.pct(sim["cobertura"][h.codigo], 2)} das '
+                           f'{F.inteiro(sim["r"])} amostras, perto dos 95% prometidos. Os QQ-plots estão no Painel 2.')
                 st.page_link('paginas/p2_amostra.py', label='Ver os QQ-plots no Painel 2 (seção 4)',
                              icon=':material/show_chart:')
             else:
                 st.caption('As proporções usam só os dias com retorno ≠ 0 '
                            f'({F.inteiro(r.n)} linhas da amostra).')
 
-        m = st.columns([1, 1.3, 0.9, 0.9, 1.3])
+        m = st.columns([1.2, 2, 1.3, 1, 1.6])        # o IC (até "−0,173 a 0,058") precisa caber inteiro
         if h.tipo == 'proporcao':
             m[0].metric('Estimativa', F.pct(r.p_hat), help=f'na amostra: {F.inteiro(r.x)} de {F.inteiro(r.n)}')
-            m[1].metric('IC 95% (%)', f'{F.num(r.ic[0] * 100, 1)} a {F.num(r.ic[1] * 100, 1)}',
+            m[1].metric('IC 95% (%)', f'{F.num(r.ic[0] * 100, 2)} a {F.num(r.ic[1] * 100, 2)}',
                         help=f'[{F.pct(r.ic[0])}; {F.pct(r.ic[1])}]')
             m[2].metric('Estatística', f'z = {F.num(r.z, 2)}')
             pop_txt = F.pct(l.parametro)
         else:
             m[0].metric('Estimativa', f'{F.num(r.media)}%', help=f'na amostra: n = {F.inteiro(r.n)}; '
                         f'desvio {F.num(r.dp, 2)}')
-            m[1].metric('IC 95% (%)', f'{F.num(r.ic[0], 2)} a {F.num(r.ic[1], 2)}',
+            m[1].metric('IC 95% (%)', f'{F.num(r.ic[0], 3)} a {F.num(r.ic[1], 3)}',
                         help=f'[{F.num(r.ic[0])}%; {F.num(r.ic[1])}%]')
             m[2].metric('Estatística', f't = {F.num(r.t, 2)}', help=f'gl = {F.inteiro(r.gl)}')
             pop_txt = f'{F.num(l.parametro)}%'
@@ -162,12 +168,19 @@ for aba, l in zip(abas, linhas):
 # ---------------------------------------------------------------- comparação
 st.header('2. Amostra × população: decisão e verdade')
 st.dataframe(I.tabela_comparacao(linhas, sim), hide_index=True, width='stretch')
-cobrem = sum(l.ic_cobre for l in linhas)
+# P1 e P1-b (e M2 e M2-b) estimam o mesmo parâmetro com o mesmo intervalo: conta-se cada intervalo uma vez
+intervalos = {}
+for l in linhas:
+    intervalos.setdefault((round(l.resultado.ic[0], 12), round(l.resultado.ic[1], 12)), []).append(l)
+grupos = [' e '.join(x.hipotese.codigo for x in g) for g in intervalos.values() if len(g) > 1]
+repetidos = (f'{grupos[0]} usam o mesmo' + ''.join(f', assim como {g}' for g in grupos[1:])) if grupos else ''
+cobrem = sum(g[0].ic_cobre for g in intervalos.values())
 erros2 = [c for c in dv.index if dv.loc[c, 'resultado'] == 'erro tipo II']
 st.markdown(
-    f'**Estimativa e intervalo.** Em {cobrem} das {len(linhas)} hipóteses o intervalo de 95% da amostra contém o '
-    'valor da população. A estimativa pontual quase nunca é igual ao valor real; o intervalo diz quanto ela pode '
-    'errar só pelo acaso do sorteio.')
+    f'**Estimativa e intervalo.** {"Os" if cobrem == len(intervalos) else f"{cobrem} dos"} {len(intervalos)} '
+    'intervalos de 95% da amostra' + (f' ({repetidos})' if grupos else '')
+    + ' contêm o valor da população. A estimativa pontual quase nunca é igual ao valor real; o intervalo diz '
+    'quanto ela pode errar só pelo acaso do sorteio.')
 verdadeiras = [c for c in dv.index if dv.loc[c, 'h0_populacao'] == 'verdadeira']
 indetectaveis = [c for c in erros2 if dv.loc[c, 'poder_igual_alfa']]
 st.markdown(
@@ -196,10 +209,11 @@ with st.expander('Como se sabe se H₀ é verdadeira na população', icon=':mat
 
 b = I.bonferroni(linhas)
 st.markdown(
-    f'**Seis testes ao mesmo tempo.** Com {len(linhas)} testes a 5%, a chance de ao menos uma rejeição falsa passa '
-    f'de 5%. Com a correção de Bonferroni (α = 5% / {len(linhas)} = {F.pct(b["alfa"], 2)}), rejeitam '
-    f'{", ".join(c for c, v in b["rejeita"].items() if v)}, e '
-    + ('nenhuma decisão muda.' if not b['muda'] else f'mudam: {", ".join(b["muda"])}.'))
+    f'**Seis testes ao mesmo tempo.** Com {len(linhas)} testes a 5%, a chance de ao menos uma rejeição falsa (se as '
+    f'H₀ fossem verdadeiras) passa de 5%. Com a correção de Bonferroni (α = 5% / {len(linhas)} = '
+    f'{F.pct(b["alfa"], 2)}), '
+    + (f'{" e ".join(c for c, v in b["rejeita"].items() if v)} continuam rejeitando, e nenhuma decisão muda.'
+       if not b['muda'] else f'mudam as decisões de {", ".join(b["muda"])}.'))
 
 # ---------------------------------------------------------------- variabilidade
 st.header('3. Variabilidade amostral')
@@ -213,10 +227,11 @@ st.dataframe(pd.DataFrame({
     'IC 95% contém a população': dv['cobertura'].map(lambda v: F.pct(v, 2)),
     'decisão da amostra oficial': dv['decisao'], 'resultado': dv['rotulo']}), hide_index=True, width='stretch')
 st.markdown(
-    f'Os intervalos de 95% cobrem o valor da população em {F.pct(min(sim["cobertura"].values()), 1)} a '
-    f'{F.pct(max(sim["cobertura"].values()), 1)} das amostras, como prometido: o método funciona mesmo com '
-    'retornos de caudas pesadas. Já a decisão depende do poder: a M1 quase nunca rejeita, e a M2 rejeita em '
-    f'{F.pct(sim["rejeicao"]["M2"], 0)} das amostras. A amostra oficial caiu entre as que não rejeitam.')
+    f'Os intervalos de 95% cobrem o valor da população em {F.pct(min(sim["cobertura"].values()), 2)} a '
+    f'{F.pct(max(sim["cobertura"].values()), 2)} das amostras, como prometido: o método funciona mesmo com '
+    f'retornos de caudas pesadas. Já a decisão depende do poder: a M1 rejeita em só '
+    f'{F.pct(sim["rejeicao"]["M1"], 2)} das amostras, e a M2 em {F.pct(sim["rejeicao"]["M2"], 2)}. A amostra '
+    'oficial caiu entre as que não rejeitam.')
 esc = st.selectbox('Hipótese', [l.hipotese.codigo for l in linhas], index=3, key='p3_sim')
 C.mostrar(C.grafico_simulacao(sim, L[esc]), 'p3_hist_sim')
 st.caption(f'Cada barra cinza conta quantas das {F.inteiro(sim["r"])} amostras deram aquela estimativa. Linha azul '
@@ -254,23 +269,26 @@ conf_tv = P['conferencia_tv'].value_counts()
 n_cb = int((A['data'] == I.DIA_CIRCUIT_BREAKER).sum())
 corr_amostra = int((A['conferencia_tv'] == 'corrigido pelo TradingView').sum())
 st.markdown(f"""
-- **População restrita.** São 40 ações escolhidas pela liquidez de hoje, de 31/10/2016 a 30/10/2026. As
-  conclusões valem para esta população, não para a bolsa inteira nem para outros períodos (viés de
-  sobrevivência: ações que perderam liquidez ou saíram da bolsa não estão aqui).
+- **População restrita.** São as 40 ações que o coletor do autor acompanha (16 componentes do Ibovespa e 24 de
+  liquidez intermediária e baixa, escolhidas em 2026), de 31/10/2016 a 30/10/2026. As conclusões valem para
+  esta população, não para a bolsa inteira nem para outros períodos (viés de sobrevivência: a escolha foi feita
+  em 2026, entre ações ainda negociadas; as que saíram da bolsa antes disso não estão aqui).
 - **Dependência entre linhas.** Ações do mesmo dia andam juntas. A inferência continua válida porque vem do
   sorteio (AAS de uma população finita, n/N = {F.pct(n / N, 1)}), e a simulação confirma a cobertura de ~95%.
 - **Qualidade da fonte.** A base do Yahoo foi conferida com o TradingView: {F.pct(conf_tv.get('idêntico', 0) / N, 1)}
   das linhas são idênticas, {F.inteiro(conf_tv.get('corrigido pelo TradingView', 0))} linhas com diferença acima de
   5 p.p. foram corrigidas ({F.inteiro(corr_amostra)} na amostra), e {F.inteiro(conf_tv.get('diferença até 5 p.p.', 0))}
   com diferenças menores ficaram como estão. Dois pregões faltam no Yahoo (29/05/2017 e 20/11/2020).
-- **Dividendos.** Os retornos não incluem dividendos e JCP, que fazem o preço cair na data-ex (~1% das linhas).
-  Pela estimativa feita na exploração, isso subestima o retorno e o gap médios em cerca de 0,01 p.p., pouco
-  perto das margens dos intervalos (±0,12 e ±0,07 p.p.).
+- **Dividendos.** Os retornos não incluem dividendos e JCP, que fazem o preço cair na data-ex; por isso o retorno
+  e o gap médios ficam um pouco subestimados. O tamanho desse efeito não foi medido: exigiria uma fonte de
+  proventos com data-ex, valor e separação entre dividendos e JCP, que esta base não tem, e a qualidade desses
+  dados no Yahoo não foi conferida.
 - **Valores extremos.** A M2 depende de {n_cb} linhas do circuit breaker de {F.data(I.DIA_CIRCUIT_BREAKER)}
   (seção 1, aba M2).
 - **Muitos testes.** Seis testes aumentam a chance de uma rejeição falsa; com Bonferroni nenhuma decisão muda.
 - **Hipóteses complementares.** P1-b e M2-b foram acrescentadas depois das quatro principais, para atender à
-  segunda leitura do enunciado (duas hipóteses sobre o mesmo parâmetro), e não por causa de um resultado. Na
-  M2-b, a direção unilateral vem da literatura, não da amostra.
+  segunda leitura do enunciado (duas hipóteses sobre o mesmo parâmetro), e não por causa de um resultado. O valor
+  2/3 da P1-b é um valor redondo, sem base teórica; na M2-b, a direção unilateral vem de Cliff, Cooper e Gulen
+  (2008), não da amostra.
 - **Variáveis descritivas.** O setor é a classificação atual da B3 aplicada aos 10 anos.
 """)

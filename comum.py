@@ -198,10 +198,11 @@ def grafico_histograma(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: s
     return fig, nota
 
 
-def _valor(v: float, log: bool) -> str:
+def _valor(v: float, log: bool, sinal: bool = True) -> str:
+    """`sinal=False` para variáveis que nunca são negativas (amplitude): sem o "+" na frente."""
     if log:
         return F.reais_mi(v)
-    return ('+' if v > 0 else '') + f'{F.num(v, 2)}%'
+    return ('+' if sinal and v > 0 else '') + f'{F.num(v, 2)}%'
 
 
 def _onde(d: pd.DataFrame, i) -> str:
@@ -218,6 +219,7 @@ def grafico_caixa(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str, p
     """
     info = D.QUANTITATIVAS[coluna]
     log = info.get('log', False)
+    sinal = not info.get('positiva', False)        # amplitude e volume nunca são negativos: sem "+"
     fig = go.Figure()
     rng = np.random.default_rng(0)            # espalhamento fixo: o gráfico não muda a cada execução
     contagens, extremos = [], []
@@ -247,7 +249,7 @@ def grafico_caixa(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str, p
             fig.add_trace(go.Scattergl(
                 x=k + rng.uniform(-0.18, 0.18, len(fora)), y=fora.values, mode='markers',
                 marker=dict(color=cor, size=3, opacity=0.35), showlegend=False,
-                customdata=[_valor(v, log) for v in reais.values],
+                customdata=[_valor(v, log, sinal) for v in reais.values],
                 hovertemplate='%{customdata}' + f'<extra>{nome}</extra>'))
         contagens.append((nome, c['fora'], c['n']))
         imin, imax = x.idxmin(), x.idxmax()
@@ -266,8 +268,10 @@ def grafico_caixa(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str, p
         nome_var = info['nome'].lower()
         varias = len(extremos) > 1          # lado a lado: rótulo curto, o nome já está no eixo
         for k, (vmin, onde_min), (vmax, onde_max), _, quem in extremos:   # dentro da área, na folga
-            topo = f'▲ máx. {_valor(vmax, log)}' if varias else f'▲ máximo na {quem}: {_valor(vmax, log)}'
-            base = f'▼ mín. {_valor(vmin, log)}' if varias else f'▼ mínimo na {quem}: {_valor(vmin, log)}'
+            topo = (f'▲ máx. {_valor(vmax, log, sinal)}' if varias
+                    else f'▲ máximo na {quem}: {_valor(vmax, log, sinal)}')
+            base = (f'▼ mín. {_valor(vmin, log, sinal)}' if varias
+                    else f'▼ mínimo na {quem}: {_valor(vmin, log, sinal)}')
             onde_max_txt = onde_max.replace(', ', '<br>') if varias else onde_max
             onde_min_txt = onde_min.replace(', ', '<br>') if varias else onde_min
             fig.add_annotation(x=k, y=1, yref='paper', yanchor='top', showarrow=False, align='center',

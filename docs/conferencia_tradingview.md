@@ -1,20 +1,19 @@
 # Conferência da base com uma segunda fonte (TradingView) e correção de 19 linhas
 
-**Status: aprovada pelo aluno e aplicada em 03/11/2026.** Os números abaixo foram conferidos depois da
-aplicação: são os da base atual, e os testes automáticos (`tests/test_dados.py`) verificam as contagens
-e as regras.
+**Aplicada em 03/11/2026.** Os números abaixo são os da base atual, e os testes automáticos
+(`tests/test_dados.py`) verificam as contagens e as regras.
 
 ## 1. Por que conferir
 
 A população foi montada com as cotações diárias do Yahoo Finance. Na revisão, 12 linhas foram marcadas
-como "possível erro da fonte": retornos acima de 25% sem explicação e aberturas exatamente em −50% em
+como "possível erro da fonte": retornos acima de 25% sem explicação e aberturas em torno de −50% em
 26/10/2026. Os dois extremos do retorno do dia (+139,13% e −66,62%) eram linhas dessa lista. Para saber
-se eram reais, todas as 96.610 linhas da população foram comparadas com uma segunda fonte.
+se eram erros da fonte, todas as 96.610 linhas da população foram comparadas com uma segunda fonte.
 
 ## 2. A segunda fonte
 
 - **TradingView**, cotações diárias da bolsa `BMFBOVESPA`, obtidas pela biblioteca `tvdatafeed`, a mesma
-  que o coletor do curso já usava para o WIN e o IND, sem login.
+  que o coletor de dados do autor (disciplina IA001) já usava para os futuros WIN e IND, sem login.
 - A biblioteca **não é oficial**: usa o canal interno do site do TradingView. Aqui ela serve para
   **conferir** a base do Yahoo, não para substituí-la.
 - As 40 ações foram baixadas em 03/11/2026, até 30/10/2026, e a cópia está **congelada** em
@@ -113,14 +112,14 @@ vizinhas.
 
 | Linhas | Resultado da conferência |
 |---|---|
-| 6 aberturas de 26/10/2026 em −50% (B3SA3, CSAN3, CYRE3, MGLU3, MRVE3, RENT3) | **idênticas** no TradingView, inclusive abertura e volume: são preços registrados pela bolsa, não erro do Yahoo |
-| PCAR3 em 01/02, 05/05 e 19/05/2017 (+139,13%, +77,52%, −34,61%) | **idênticas**: negócios reais da ação ON, então pouco líquida (em maio, com dias sem negócio entre um e outro) |
+| 6 aberturas de 26/10/2026 em torno de −50% (−49,94% a −50,00%: B3SA3, CSAN3, CYRE3, MGLU3, MRVE3, RENT3) | **idênticas** no TradingView, inclusive abertura e volume; por isso ficam como estão |
+| PCAR3 em 01/02, 05/05 e 19/05/2017 (+139,13%, +77,52%, −34,61%) | **idênticas** nas duas fontes; a ação ON era então pouco líquida (em maio, com dias sem negócio entre um e outro) |
 | PCAR3 em 01/03/2021 (+112,28%) | **idêntica** |
 | PCAR3 em 23/08/2023 (−66,62%) | **erro do Yahoo**: corrigida para +16,11% |
 | UGPA3 em 28/06/2021 (+119,33%) | **erro do Yahoo**: corrigida para +1,05% |
 
 A coluna `suspeito` sai da base e dá lugar à `conferencia_tv`, e a população continua com 27 colunas. O
-máximo de +139,13% (PCAR3, 01/02/2017) continua na base, agora confirmado pelas duas fontes.
+máximo de +139,13% (PCAR3, 01/02/2017) continua na base: é idêntico nas duas fontes.
 
 ## 7. Efeito na população
 
@@ -129,12 +128,12 @@ máximo de +139,13% (PCAR3, 01/02/2017) continua na base, agora confirmado pelas
 | Retorno do dia | média | 0,0528% | 0,0525% |
 | | desvio-padrão | 2,906 | 2,868 |
 | | mínimo | −66,62% (PCAR3, 23/08/2023, erro) | −58,23% (MGLU3, 26/10/2026, nas duas fontes) |
-| | máximo | +139,13% (PCAR3, 01/02/2017) | igual, confirmado |
+| | máximo | +139,13% (PCAR3, 01/02/2017) | igual, idêntico nas duas fontes |
 | | curtose | 131,2 | 104,2 |
 | Gap de abertura | média | 0,0910% | 0,0904% |
 | | desvio-padrão | 1,684 | 1,618 |
 | | mínimo | −67,53% (PCAR3, erro) | −50,00% (aberturas de 26/10/2026, nas duas fontes) |
-| | máximo | +139,13% (PCAR3, 01/02/2017) | igual, confirmado |
+| | máximo | +139,13% (PCAR3, 01/02/2017) | igual, idêntico nas duas fontes |
 | | curtose | 926,0 | 759,5 |
 | Abertura ao fechamento e amplitude | média, desvio, extremos | — | praticamente iguais |
 | P1 (acompanha o IBOV) | proporção | 69,462% | 69,463% |
@@ -143,7 +142,7 @@ máximo de +139,13% (PCAR3, 01/02/2017) continua na base, agora confirmado pelas
 ## 8. Efeito na amostra e nos testes
 
 - **Nenhuma das 19 linhas corrigidas está na amostra.** Os valores das 2.343 linhas sorteadas ficam
-  idênticos, e os resultados dos seis testes e dos intervalos (seção 5 do plano) **não mudam**. O arquivo
+  idênticos, e os resultados dos seis testes e dos intervalos (Painel 3) **não mudam**. O arquivo
   da amostra muda só pela troca da coluna `suspeito` por `conferencia_tv`, e o manifesto é gerado de novo.
 - Na amostra: 2.311 linhas idênticas nas duas fontes, 29 com diferença até 5 p.p. e 3 com intervalo
   diferente.
@@ -186,30 +185,28 @@ caso, e o efeito de outros limites está na seção 4.
 - Dois pregões faltam na população porque faltam no Yahoo: 29/05/2017 (sem negócio na fonte) e
   20/11/2020 (ausente). O TradingView tem os dois.
 - O Fear & Greed (`fg_ant`) e o volume relativo (`vol_rel`) continuam calculados com os dados do Yahoo.
-- Dividendos e JCP continuam fora dos retornos (frase já registrada no plano).
+- Dividendos e JCP continuam fora dos retornos (ver as limitações no README).
 
 ## 11. Reprodução
 
 A cópia de 03/11/2026 já está congelada; o `--baixar` só é preciso para refazer tudo do zero (e se recusa
 a sobrescrever a cópia existente).
 
-```powershell
-# uma vez, como foi feito com o Yahoo (recusa sobrescrever); precisa do tvdatafeed, que está no venv antigo
-E:\OneDrive\PosIA\.venv\Scripts\python.exe conferir_tradingview.py --baixar
-# sempre, no venv do trabalho
-D:\venvs\probestat312\Scripts\python.exe preparar_dados.py   # aplica a conferência e a correção
-D:\venvs\probestat312\Scripts\python.exe amostra.py          # mesma amostra
+```
+# uma vez, num ambiente com a biblioteca tvdatafeed (fora do requirements.txt)
+python conferir_tradingview.py --baixar
+# sempre, no ambiente do trabalho (requirements.txt)
+python preparar_dados.py   # aplica a conferência e a correção
+python amostra.py          # mesma amostra
 ```
 
 Depois do download, a cópia congelada dispensa a biblioteca: o `preparar_dados.py` e o app só leem os
 arquivos.
 
-## 12. O que mudou nos arquivos e no app (aplicado em 03/11/2026)
+## 12. Arquivos
 
-- Novos: `dados/bruto/tv_1d/` (40 arquivos) e `dados/conferencia_tradingview.parquet`, a comparação linha
-  a linha, para qualquer um conferir.
-- `preparar_dados.py`: aplica a regra; a lista fixa de suspeitos sai do código.
-- Coluna `suspeito` → `conferencia_tv`; dicionário de variáveis, testes e textos atualizados.
+- `dados/bruto/tv_1d/` (40 arquivos) e `dados/bruto/manifesto_tv.json`: a cópia congelada do TradingView.
+- `dados/conferencia_tradingview.parquet`: a comparação linha a linha, para qualquer um conferir.
+- `conferir_tradingview.py`: download e comparação; `preparar_dados.py` aplica a regra de correção.
+- Coluna `conferencia_tv` da população: a categoria de cada linha (no lugar da antiga lista de suspeitos).
 - Painel 1, "Sobre a base": um parágrafo sobre a conferência e a tabela de categorias.
-- Boxplot: os rótulos de mínimo e máximo passam a dizer a ação e a data.
-- README e plano: resumo desta conferência, com link para este documento.

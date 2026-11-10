@@ -1,6 +1,6 @@
 """Inferência: intervalos de confiança, testes de hipóteses e comparação com a população.
 
-Métodos (fixados no plano do trabalho antes do sorteio; resumo no README):
+Métodos (os mesmos em todas as hipóteses; resumo no README):
   proporção  teste z com p0 no erro-padrão; IC de Wald 95%. Conferências: binomial exato e IC de Wilson.
   média      teste t de uma amostra; IC t 95% (gl = n − 1). Conferência: teste do sinal (mediana = 0).
   α = 5% em todos. A correção de população finita (√(1 − n/N) ≈ 0,988) é citada, não aplicada.
@@ -158,12 +158,15 @@ HIPOTESES: list[Hipotese] = [
              'A chance de a ação subir num dia é diferente de 50%?',
              'proporção de dias de alta (retorno > 0) entre os dias com retorno ≠ 0',
              'p = 0,5', 'p ≠ 0,5', 0.5, 'two-sided',
-             justificativa='afirmação comum de que a direção diária é imprevisível'),
+             justificativa='na hipótese do passeio aleatório (Fama, 1965), as variações sucessivas dos '
+                           'preços são independentes e a direção de um dia não é previsível; com variações '
+                           'simétricas em torno de zero, a chance de alta fica em 50%. Bilateral, porque não há '
+                           'direção prevista'),
     Hipotese('M1', 'media', 'O retorno médio diário é zero',
              'Em média, a ação ganha ou perde algo por dia?',
              'retorno do dia: fechamento(t) / fechamento(t−1) − 1, em %, sem dividendos',
              'μ = 0', 'μ ≠ 0', 0.0, 'two-sided',
-             justificativa='bilateral: não há direção prevista antes dos dados'),
+             justificativa='bilateral, porque não há direção prevista antes dos dados'),
     Hipotese('M2', 'media', 'O gap médio de abertura é zero',
              'Em média, a ação abre acima ou abaixo do fechamento anterior?',
              'gap de abertura: abertura(t) / fechamento(t−1) − 1, em %',
@@ -172,12 +175,15 @@ HIPOTESES: list[Hipotese] = [
     Hipotese('P1-b', 'proporcao', 'A ação acompanha o Ibovespa em mais de dois terços dos dias',
              'O acompanhamento passa de dois terços dos dias?',
              'o mesmo evento da P1', 'p ≤ 2/3', 'p > 2/3', 2 / 3, 'greater', complementar=True,
-             justificativa='segunda hipótese sobre o parâmetro da P1, com um H0 mais exigente'),
+             justificativa='segunda hipótese sobre o mesmo parâmetro da P1, com um valor de H₀ mais exigente '
+                           '(2/3, um valor redondo, sem base teórica), para mostrar que, com a mesma estimativa e '
+                           'o mesmo intervalo, a conclusão depende do valor testado'),
     Hipotese('M2-b', 'media', 'O gap médio de abertura é positivo',
              'A ação abre, em média, acima do fechamento anterior?',
              'a mesma variável da M2', 'μ ≤ 0', 'μ > 0', 0.0, 'greater', complementar=True,
-             justificativa='unilateral porque a literatura (Cliff, Cooper e Gulen, 2008) prevê ganho '
-                           'positivo entre um pregão e o seguinte, antes destes dados'),
+             justificativa='unilateral porque Cliff, Cooper e Gulen (2008) documentam, nas ações americanas, '
+                           'retornos maiores do fechamento à abertura seguinte do que durante o pregão; a direção '
+                           'vem desse estudo, não destes dados'),
 ]
 POR_CODIGO = {h.codigo: h for h in HIPOTESES}
 
@@ -209,9 +215,9 @@ def condicoes(h: Hipotese, A: pd.DataFrame, N: int) -> list[dict]:
         x = h.variavel(A).dropna().values
         out.append({'condicao': 'n ≥ 30 (Teorema Central do Limite)', 'valor': F.inteiro(len(x)),
                     'ok': len(x) >= 30})
-        out.append({'condicao': 'Forma da distribuição (informativo)',
+        out.append({'condicao': 'Forma da distribuição (só informativo, não é condição)',
                     'valor': f'assimetria {F.num(stats.skew(x), 2)}, curtose {F.num(stats.kurtosis(x), 1)}',
-                    'ok': True})
+                    'ok': None})
     return out
 
 
@@ -346,8 +352,8 @@ def licao(resultado: str, h0_populacao: str, taxa_rejeicao: float, distancia: st
 
     `distancia`: quanto o parâmetro da população se afasta do valor de H0, já formatado.
     `poder_igual_alfa`: o poder simulado não se distingue de α (limite_poder_igual_alfa)."""
-    taxa = F.pct(taxa_rejeicao, 1)
-    nao = F.pct(1 - taxa_rejeicao, 1)
+    taxa = F.pct(taxa_rejeicao, 2)          # as mesmas casas das tabelas da simulação
+    nao = F.pct(1 - taxa_rejeicao, 2)
     if resultado == 'erro tipo II' and poder_igual_alfa:
         return (f'Erro tipo II, mas inevitável: H₀ é falsa na população por só {distancia}, uma diferença que '
                 f'nenhuma amostra deste tamanho percebe. O poder do teste é {taxa}, que não se distingue de '
@@ -438,7 +444,10 @@ def conclusao(l: Linha) -> str:
     if r.limite_unilateral is not None:
         lim = _pct(r.limite_unilateral) if h.tipo == 'proporcao' else f'{_num(r.limite_unilateral)}%'
         lado = 'inferior' if h.alternativa == 'greater' else 'superior'
-        texto += f' Limite {lado} unilateral 95%, coerente com o teste: {lim}.'
+        if h.tipo == 'proporcao':          # Wald (p̂ no erro-padrão); o teste usa p₀: não são equivalentes
+            texto += f' Limite {lado} unilateral 95% (Wald): {lim}.'
+        else:                              # mesmo erro-padrão e mesma distribuição t do teste
+            texto += f' Limite {lado} unilateral 95%, equivalente ao teste t: {lim}.'
     return texto
 
 

@@ -1,6 +1,6 @@
 """Conferência da base do Yahoo com uma segunda fonte (TradingView) — docs/conferencia_tradingview.md.
 
-Download (uma vez; precisa da biblioteca tvdatafeed, que está no venv antigo do curso):
+Download (uma vez; precisa de um ambiente com a biblioteca tvdatafeed, que não está no requirements.txt):
     E:\\OneDrive\\PosIA\\.venv\\Scripts\\python.exe conferir_tradingview.py --baixar
 grava dados/bruto/tv_1d/<ATIVO>.parquet (até DATA_FIM) e se recusa a sobrescrever uma cópia existente.
 

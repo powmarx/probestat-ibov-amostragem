@@ -31,8 +31,13 @@ with st.expander('Sobre a base de dados: fonte, construção e variáveis', icon
     corr = int((P['conferencia_tv'] == 'corrigido pelo TradingView').sum())
     st.markdown(f"""
 **Fonte dos preços.** Yahoo Finance, cotações diárias (abertura, máxima, mínima, fechamento e volume)
-das {r["acoes"]} ações mais negociadas da B3 e do Ibovespa. Página de histórico de cada ação, por exemplo
+de {r["acoes"]} ações da B3 e do Ibovespa. Página de histórico de cada ação, por exemplo
 [VALE3.SA]({C.FONTE_YAHOO}); dados obtidos pela API pública `{C.API_YAHOO}`.
+
+**As {r["acoes"]} ações.** São as que o coletor de dados do autor acompanha: 16 componentes do Ibovespa
+com liquidez variada, escolhidas nas primeiras atividades da disciplina IA001 – Análise e Visualização de
+Dados com Python e Ferramentas Assistidas por IA, e 24 ações de liquidez intermediária e baixa,
+acrescentadas na terceira atividade da mesma disciplina, em 2026. Não são as mais negociadas da bolsa.
 
 **Fonte do setor.** [B3, Classificação setorial]({C.FONTE_B3}), consultada em 31/10/2026 pela API de
 empresas listadas que essa página usa.
@@ -41,8 +46,8 @@ empresas listadas que essa página usa.
 [dados/populacao.zip]({C.ZIP_POPULACAO}). A cópia congelada das cotações e o código que monta a
 população também estão lá.
 
-**Contexto e objetivo.** Os preços foram coletados nos trabalhos anteriores do curso. Aqui eles servem
-para descrever como as ações se comportam dia a dia e testar afirmações comuns sobre a bolsa: se a
+**Contexto e objetivo.** Os preços vêm do coletor diário que o autor montou na disciplina IA001, que guarda
+10 anos de cotações diárias. Aqui eles servem para descrever como as ações se comportam dia a dia e testar afirmações comuns sobre a bolsa: se a
 ação acompanha o índice, se a alta é "cara ou coroa", se o retorno e o gap médios são zero.
 
 **Construção da população.**
@@ -50,17 +55,17 @@ ação acompanha o índice, se a alta é "cara ou coroa", se o retorno e o gap m
   mudar com novas coletas.
 - Só dias com negócio (volume > 0). O fechamento anterior é o do último pregão com negócio da ação.
 - Preços ajustados pela fonte por desdobramentos, grupamentos e bonificações. **Dividendos e JCP não
-  estão incluídos**: o preço cai na data-ex (~1% das linhas); pela estimativa feita na exploração, isso
-  subestima o retorno e o gap médios em cerca de 0,01 p.p.
+  estão incluídos**: o preço cai na data-ex, então o retorno e o gap médios ficam um pouco subestimados.
+  O tamanho desse efeito não foi medido (ver as limitações no Painel 3).
 - Faltam dois pregões, porque faltam no Yahoo: 29/05/2017 (sem negócio na fonte) e 20/11/2020.
 - Tamanho: **{F.inteiro(len(P))} observações e {len(P.columns)} variáveis**.
 
 **Conferência com uma segunda fonte.** Todas as linhas foram comparadas com as cotações do TradingView
 (lidas por uma biblioteca não oficial e congeladas junto com a base). Em **{F.pct(ident / len(P), 1)}**
 das linhas o retorno do dia é idêntico nas duas fontes. As **{corr} linhas** com diferença acima de
-5 p.p., com o mesmo pregão anterior, eram erros do Yahoo (por exemplo, cisões não ajustadas) e
-receberam os preços do TradingView; nenhuma delas está na amostra. O resultado de cada linha está na
-coluna `conferencia_tv`.
+5 p.p., com o mesmo pregão anterior, foram tratadas como erros do Yahoo e receberam os preços do
+TradingView (em várias, o Yahoo põe o movimento no dia errado ou não ajusta um evento societário);
+nenhuma delas está na amostra. O resultado de cada linha está na coluna `conferencia_tv`.
 """)
     st.dataframe(D.tabela_conferencia(P), hide_index=True, width='stretch')
     st.caption('Detalhes, a lista das linhas corrigidas e a justificativa do limite de 5 p.p.: '
@@ -100,7 +105,8 @@ st.markdown(C.md(D.frase_forma(f[var], info['unidade'], positiva=info.get('posit
 
 st.subheader('Medidas descritivas das cinco variáveis quantitativas')
 st.dataframe(D.tabela_medidas(f), hide_index=True, width='stretch')
-st.caption('Curtose em excesso (0 na distribuição normal). Assimetria e curtose não têm unidade. '
+st.caption('Assimetria e curtose: coeficientes de momento, sem correção de viés; curtose em excesso (0 na '
+           'distribuição normal). Assimetria e curtose não têm unidade. '
            'Volume financeiro em R$ milhões.')
 
 # ---------------------------------------------------------------- qualitativas

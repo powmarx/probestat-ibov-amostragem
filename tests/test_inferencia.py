@@ -135,7 +135,10 @@ def test_sensibilidade_m2(A):
 
 def test_condicoes(A, P):
     for h in I.HIPOTESES:
-        assert all(c['ok'] for c in I.condicoes(h, A, len(P)))
+        cond = I.condicoes(h, A, len(P))
+        assert all(c['ok'] for c in cond if c['ok'] is not None)            # as condições de verdade
+        informativas = [c for c in cond if c['ok'] is None]                  # forma: só informativo
+        assert len(informativas) == (1 if h.tipo == 'media' else 0)
 
 
 def test_conclusao_gerada_dos_numeros(linhas):
@@ -185,7 +188,7 @@ def test_amostra_exercicio_e_outra_aas(P, A):
 
 
 def test_licao():
-    assert I.licao('erro tipo II', 'falsa', 0.7865).startswith('Erro tipo II') and '21,4%' in I.licao(
+    assert I.licao('erro tipo II', 'falsa', 0.7865).startswith('Erro tipo II') and '21,35%' in I.licao(
         'erro tipo II', 'falsa', 0.7865)
     assert 'efeito existe' in I.licao('acerto', 'falsa', 1.0)
     p2 = I.licao('erro tipo II', 'falsa', 0.0535, '0,14 p.p.', True)

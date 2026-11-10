@@ -161,8 +161,8 @@ if a['vol_rel'].notna().sum() >= 30 and f['vol_rel'].notna().sum() >= 100:
     with v2:
         C.mostrar(fb, 'p2_vol_abs')
     cp, ca_ = D.correlacao_volume(f), D.correlacao_volume(a)
-    st.markdown(f'Spearman do |ret| com o volume relativo: {F.num(ca_["relativo"], 2)} na amostra e '
-                f'{F.num(cp["relativo"], 2)} na população.')
+    st.markdown(f'Correlação de Spearman do |ret| com o volume relativo (compara as posições dos valores, de −1 a 1): '
+                f'{F.num(ca_["relativo"], 2)} na amostra e {F.num(cp["relativo"], 2)} na população.')
 else:
     st.info('Poucas linhas com volume relativo nestes filtros.')
 if (a['humor_ant'] != D.SEM_REF).any():
@@ -173,9 +173,10 @@ if (a['humor_ant'] != D.SEM_REF).any():
     with h2:
         C.mostrar(hb, 'p2_humor_agit')
 st.markdown('**Na amostra:** ' + D.frase_humor(D.tabela_humor(a)))
+st.caption(D.NOTA_HUMOR)
 st.caption('A concentração do volume do Painel 1 não é repetida aqui: a amostra tem em média '
            f'{F.num(len(A) / A["data"].nunique(), 2)} ação por pregão, então a fatia de cada ação no volume do dia '
-           'não se calcula nela. ' + D.NOTA_HUMOR)
+           'não se calcula nela.')
 
 # ---------------------------------------------------------------- condições dos testes de média
 st.header('4. Condição para os testes de média')
