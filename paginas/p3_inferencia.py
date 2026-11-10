@@ -77,8 +77,8 @@ VARIAVEL_QUALITATIVA = {
 }
 AVISO_COMPLEMENTAR = {
     'P1-b': 'Hipótese complementar: olha o mesmo parâmetro da P1 de outro ângulo, com um valor de H₀ mais exigente.',
-    'M2-b': 'Hipótese complementar: olha o mesmo parâmetro da M2 de outro ângulo, testando só a direção que a '
-            'literatura aponta.',
+    'M2-b': 'Hipótese complementar: olha o mesmo parâmetro da M2 de outro ângulo, testando só a direção que '
+            'Cliff, Cooper e Gulen (2008) documentam nas ações americanas.',
 }
 abas = st.tabs([l.hipotese.codigo for l in linhas])
 for aba, l in zip(abas, linhas):
