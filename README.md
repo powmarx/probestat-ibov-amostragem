@@ -1,6 +1,6 @@
 # Amostragem e inferência em 10 anos de pregões da B3
 
-Trabalho final de **Probabilidade e Estatística para IA** (pós-graduação, UFRGS).
+Trabalho final de **IA003 — Probabilidade e Estatística para IA** (pós-graduação, UFRGS).
 Autor: **Paulo Luis Silva Marques**.
 
 Amostragem, intervalos de confiança e testes de hipóteses numa base grande de cotações diárias,
