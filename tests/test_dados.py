@@ -167,6 +167,16 @@ def test_manifesto_bate_com_os_arquivos(manifesto):
     assert manifesto['selecao']['sha256_csv'] == _sha(DADOS / 'amostra.csv')
 
 
+# ---------------------------------------------------------------- carteira do Ibovespa
+def test_carteira_ibov(P):
+    import descritiva as D
+    c = D.carteira_ibov(P['ativo'].unique())
+    assert c['data'] == '10/11/2026' and c['ativos'] == 76
+    assert len(c['dentro']) == 34 and c['fora'] == ['ALPA4', 'CVCB3', 'IRBR3', 'PCAR3', 'SLCE3', 'SMTO3']
+    assert c['peso'] == pytest.approx(0.692, abs=0.001)
+    assert '34 das 40 ações' in D.frase_carteira_ibov(P['ativo'].unique())
+
+
 # ---------------------------------------------------------------- setores
 def test_setores_iguais_a_b3():
     S = pd.read_csv(PD.SETORES)

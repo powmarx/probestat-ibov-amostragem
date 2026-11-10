@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 
 import comum as C
+import descritiva as D
 import formato as F
 import inferencia as I
 
@@ -287,8 +288,10 @@ n_cb = int((A['data'] == I.DIA_CIRCUIT_BREAKER).sum())
 corr_amostra = int((A['conferencia_tv'] == 'corrigido pelo TradingView').sum())
 st.markdown(f"""
 - **População restrita.** São as 40 ações que o coletor do autor acompanha, escolhidas em 2026 na disciplina
-  IA001 para estudar se as maiores ações antecipam o Ibovespa: 16 componentes do índice com liquidez variada e
-  24 ações de liquidez intermediária e baixa (ver "Sobre a base" no Painel 1), de 31/10/2016 a 30/10/2026. As conclusões valem para
+  IA001 para estudar se as maiores ações antecipam o Ibovespa: 16 ações de liquidez variada, tratadas como
+  componentes do índice, e 24 de liquidez intermediária e baixa (ver "Sobre a base" no Painel 1), de 31/10/2016 a
+  30/10/2026. Na carteira atual do Ibovespa estão {len(D.carteira_ibov(P['ativo'].unique())['dentro'])} das 40, e a
+  composição do índice mudou ao longo dos 10 anos. As conclusões valem para
   esta população, não para a bolsa inteira nem para outros períodos (viés de sobrevivência: a escolha foi feita
   em 2026, entre ações ainda negociadas; as que saíram da bolsa antes disso não estão aqui).
 - **Dependência entre linhas.** Ações do mesmo dia andam juntas. A inferência continua válida porque vem do

@@ -5,6 +5,9 @@ exatamente o mesmo cálculo dos dois lados.
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -100,6 +103,35 @@ def nota_volume_baixo(d: pd.DataFrame, quem: str = 'população') -> str:
             f'entre {baixo["ano"].min()} e {baixo["ano"].max()}, quando essas ações tinham pouca liquidez. O menor é '
             f'{F.reais_mi(x[i])} ({d.at[i, "ativo"]}, {F.data(d.at[i, "data"])}, '
             f'{F.inteiro(d.at[i, "volume"])} ações).')
+
+
+CARTEIRA_IBOV = Path(__file__).resolve().parent / 'dados' / 'b3_carteira_ibov_20261110.json'
+# saídas do índice das ações da cesta original da Atividade 01, conferidas em notícias da época
+SAIDAS_IBOV = {'ALPA4': 'janeiro de 2025', 'CVCB3': 'janeiro de 2026'}
+
+
+def carteira_ibov(acoes) -> dict:
+    """Quantas das ações da base estão na carteira do Ibovespa guardada em dados/ (resposta da API da B3)."""
+    j = json.loads(CARTEIRA_IBOV.read_text(encoding='utf-8'))
+    peso = {r['cod']: float(r['part'].replace('.', '').replace(',', '.')) for r in j['results']}
+    acoes = sorted(set(acoes))
+    dentro = [a for a in acoes if a in peso]
+    dia, mes, ano = j['header']['date'].split('/')
+    return {'data': f'{dia}/{mes}/20{ano}', 'ativos': int(j['page']['totalRecords']), 'dentro': dentro,
+            'fora': [a for a in acoes if a not in peso], 'peso': sum(peso[a] for a in dentro) / 100}
+
+
+def frase_carteira_ibov(acoes) -> str:
+    c = carteira_ibov(acoes)
+    fora = c['fora']
+    lista = fora[0] if len(fora) == 1 else ', '.join(fora[:-1]) + ' e ' + fora[-1]
+    saidas = [f'{a} saiu em {SAIDAS_IBOV[a]}' for a in fora if a in SAIDAS_IBOV]
+    return (f'**Na carteira atual do índice.** Na carteira do Ibovespa de {c["data"]} ({c["ativos"]} ativos, '
+            f'consultada na B3), {len(c["dentro"])} das {len(acoes)} ações estão no índice e somam '
+            f'{F.pct(c["peso"], 1)} do peso dele. Não estão: {lista}.'
+            + (f' Da cesta original da Atividade 01, {" e ".join(saidas)}.' if saidas else '')
+            + ' A composição do índice é revista a cada quatro meses, então essa lista vale para hoje, não para '
+              'os 10 anos inteiros.')
 
 
 def tabela_conferencia(d: pd.DataFrame) -> pd.DataFrame:
@@ -488,10 +520,12 @@ def frase_humor(T: pd.DataFrame) -> str:
 NOTA_VOLUME = ('Descritivo, sem teste de hipótese. É associação, não causa: uma notícia pode provocar ao mesmo tempo '
                'o volume alto e o movimento grande. Volume relativo = volume financeiro do dia ÷ mediana dos 20 '
                'pregões anteriores da mesma ação; as linhas sem 20 pregões anteriores ficam fora.')
-NOTA_CONCENTRACAO = ('Descritivo. Volume não é peso no índice: o peso no Ibovespa vem do valor de mercado das ações em '
-                     'circulação, que a base não tem; além disso, nem todas as 40 ações estão na carteira atual do '
-                     'índice, e ele tem outras ações que não estão nesta base. Por isso o '
-                     'título fala em concentração do volume, não do índice.')
+def nota_concentracao(acoes) -> str:
+    c = carteira_ibov(acoes)
+    return ('Descritivo. Volume não é peso no índice: o peso no Ibovespa vem do valor de mercado das ações em '
+            f'circulação, que a base não tem. Além disso, só {len(c["dentro"])} das {len(set(acoes))} ações estão '
+            f'na carteira atual do índice, que tem {c["ativos"]} ativos. Por isso o título fala em concentração do '
+            'volume, não do índice.')
 EXPLICACAO_HUMOR = """
 **O que é.** Um termômetro do humor do mercado, de 0 (medo extremo) a 100 (ganância extrema), calculado para
 cada pregão com o Ibovespa e as mesmas 40 ações desta base. A ideia vem do Fear & Greed Index da CNN, feito

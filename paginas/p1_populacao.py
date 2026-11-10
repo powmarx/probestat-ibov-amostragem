@@ -37,11 +37,14 @@ de {r["acoes"]} ações da B3 e do Ibovespa. Página de histórico de cada açã
 **As {r["acoes"]} ações e o critério de escolha.** São as que o coletor de dados do autor acompanha. Ele foi
 montado na disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA, para
 estudar se as três maiores ações do Ibovespa (VALE3, ITUB4 e PETR4) antecipam o índice. A Atividade 01 da
-disciplina escolheu 16 componentes do índice com liquidez variada, para ver se as três maiores se destacavam
-entre elas. Na Atividade 02, essa cesta se mostrou líquida demais para medir o atraso do índice (só 1% a 4%
+disciplina escolheu 16 ações com liquidez variada, tratadas como componentes do índice, para ver se as três
+maiores se destacavam entre elas (duas já tinham saído do Ibovespa, como mostra o parágrafo seguinte). Na
+Atividade 02, essa cesta se mostrou líquida demais para medir o atraso do índice (só 1% a 4%
 das ações ficavam sem negócio em cada minuto), e na Atividade 03 foram acrescentadas 24 ações de liquidez
 intermediária e baixa. A população é, portanto, o conjunto definido por esse estudo, e não uma amostra da
 bolsa nem as ações mais negociadas.
+
+{D.frase_carteira_ibov(P['ativo'].unique())}
 
 **Fonte do setor.** [B3, Classificação setorial]({C.FONTE_B3}), consultada em 31/10/2026 pela API de
 empresas listadas que essa página usa.
@@ -165,7 +168,7 @@ with c1:
 with c2:
     C.mostrar(cb, 'p1_conc_acao')
 st.markdown(D.frase_concentracao(conc))
-st.caption(D.NOTA_CONCENTRACAO)
+st.caption(D.nota_concentracao(P['ativo'].unique()))
 
 st.subheader('O humor de ontem não diz para onde a ação vai, mas diz quanto ela se mexe', anchor=C.ANCORA_HUMOR)
 with st.expander('Como o Fear & Greed B3 é calculado', icon=':material/psychology:'):
