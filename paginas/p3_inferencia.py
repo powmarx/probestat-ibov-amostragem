@@ -65,6 +65,15 @@ LEITURA = {
 st.header('1. As hipóteses')
 st.caption('Quatro hipóteses principais (P1, P2, M1, M2), duas de proporção e duas de média, e duas '
            'complementares (P1-b, M2-b), que fazem um segundo teste sobre o mesmo parâmetro.')
+# o enunciado pede a variável qualitativa e o evento: as mesmas variáveis do Painel 1
+_SEGUE = ('acompanha o Ibovespa (`segue_ibov`: sim, não ou sem variação), a mesma do Painel 1. O evento de '
+          'interesse é "sim", contado entre os dias com variação.')
+VARIAVEL_QUALITATIVA = {
+    'P1': _SEGUE,
+    'P1-b': _SEGUE,
+    'P2': ('direção do dia (`direcao`: alta, baixa ou sem variação), a mesma do Painel 1. O evento de interesse é '
+           '"alta", contado entre os dias com variação.'),
+}
 AVISO_COMPLEMENTAR = {
     'P1-b': 'Hipótese complementar: olha o mesmo parâmetro da P1 de outro ângulo, com um valor de H₀ mais exigente.',
     'M2-b': 'Hipótese complementar: olha o mesmo parâmetro da M2 de outro ângulo, testando só a direção que a '
@@ -80,6 +89,8 @@ for aba, l in zip(abas, linhas):
             st.info(AVISO_COMPLEMENTAR[h.codigo], icon=':material/info:')
         st.markdown(f'**Pergunta:** {h.pergunta}')
         tipo = 'Proporção' if h.tipo == 'proporcao' else 'Média'
+        if h.codigo in VARIAVEL_QUALITATIVA:
+            st.markdown(f'**Variável qualitativa:** {VARIAVEL_QUALITATIVA[h.codigo]}')
         st.markdown(f'**{"Evento" if h.tipo == "proporcao" else "Variável"} ({tipo.lower()}):** {h.definicao}.')
         c1, c2, c3 = st.columns(3)
         c1.markdown(f'**H₀:** {h.h0}')

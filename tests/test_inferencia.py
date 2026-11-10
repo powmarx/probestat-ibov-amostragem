@@ -1,4 +1,4 @@
-"""Testes da inferência: casos calculados à mão e os valores oficiais registrados no plano."""
+"""Testes da inferência: casos calculados à mão e os valores oficiais do trabalho (Painel 3 e README)."""
 import numpy as np
 import pandas as pd
 import pytest
@@ -64,7 +64,7 @@ def test_formatos_brasileiros():
     assert I._pval(3e-5) == '< 0,0001'
 
 
-# ---------------------------------------------------------------- valores oficiais (plano, seção 5)
+# ---------------------------------------------------------------- valores oficiais (Painel 3 e README)
 def test_parametros_da_populacao(linhas):
     assert linhas['P1'].parametro == pytest.approx(0.6946, abs=5e-5)
     assert linhas['P2'].parametro == pytest.approx(0.4986, abs=5e-5)
@@ -148,8 +148,8 @@ def test_conclusao_gerada_dos_numeros(linhas):
 
 
 # ---------------------------------------------------------------- simulação (2.000 AAS, semente 1)
-def test_simulacao_reproduz_o_plano(sim):
-    # contagens exatas em 2.000 réplicas (o plano mostra os mesmos valores com uma casa)
+def test_simulacao_reproduz_os_valores_oficiais(sim):
+    # contagens exatas em 2.000 réplicas (o Painel 3 mostra as mesmas taxas em %)
     rejeicoes = {c: round(v * 2000) for c, v in sim['rejeicao'].items()}
     assert rejeicoes == {'P1': 2000, 'P2': 107, 'M1': 295, 'M2': 1573, 'P1-b': 1789, 'M2-b': 1723}
     coberturas = {c: round(v * 2000) for c, v in sim['cobertura'].items()}

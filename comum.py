@@ -146,15 +146,6 @@ def _eixo_log(fig: go.Figure, eixo: str = 'x') -> None:
     (fig.update_xaxes if eixo == 'x' else fig.update_yaxes)(tickvals=vals, ticktext=texto)
 
 
-def linha_ref(fig: go.Figure, valor: float, texto: str, eixo: str = 'x', posicao: str = 'top') -> None:
-    kw = dict(line_dash=TRACO_REF, line_color=COR_REF, line_width=1,
-              annotation_text=f'<b>{texto}</b>', annotation_font_size=12)
-    if eixo == 'x':
-        fig.add_vline(x=valor, annotation_position=f'{posicao} right', **kw)
-    else:
-        fig.add_hline(y=valor, annotation_position=f'{posicao} right', **kw)
-
-
 def grafico_histograma(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str,
                        altura: int = 330) -> tuple[go.Figure, str]:
     """Histograma em % das linhas. O primeiro conjunto define as classes; os outros usam as mesmas."""

@@ -42,7 +42,8 @@ acordá-lo; o primeiro acesso pode levar cerca de 30 segundos.
   consultada em 31/10/2026 pela API de empresas listadas que essa página usa. A resposta está em
   `dados/b3_classificacao_setorial.json`.
 - **Conferência:** TradingView (bolsa `BMFBOVESPA`), lido pela biblioteca não oficial `tvdatafeed`,
-  usado só para conferir a base do Yahoo (seção "Conferência com o TradingView").
+  usado para conferir a base do Yahoo e para corrigir as 19 linhas com diferença acima de 5 p.p. (seção
+  "Conferência com o TradingView").
 
 Os dados são usados para fins acadêmicos e não comerciais, com as fontes citadas. Os termos de uso do
 Yahoo Finance e do TradingView restringem a redistribuição; quem precisar dos dados para outro fim deve
@@ -279,7 +280,7 @@ pip install -r requirements.txt
 python preparar_dados.py     # monta a população a partir do bruto congelado; grava parquet, csv e zip
 python amostra.py            # refaz o sorteio e o manifesto
 streamlit run app.py         # abre os painéis
-python -m pytest             # 75 testes
+python -m pytest             # 76 testes
 ```
 
 - `preparar_dados.py` e `amostra.py` regravam os arquivos de `dados/`. Com numpy 2.5.3, eles saem

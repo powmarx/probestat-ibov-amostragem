@@ -15,7 +15,8 @@ se eram erros da fonte, todas as 96.610 linhas da população foram comparadas c
 - **TradingView**, cotações diárias da bolsa `BMFBOVESPA`, obtidas pela biblioteca `tvdatafeed`, a mesma
   que o coletor de dados do autor (disciplina IA001) já usava para os futuros WIN e IND, sem login.
 - A biblioteca **não é oficial**: usa o canal interno do site do TradingView. Aqui ela serve para
-  **conferir** a base do Yahoo, não para substituí-la.
+  **conferir** a base do Yahoo e para corrigir as 19 linhas com diferença acima de 5 p.p. (seção 5). A base
+  continua sendo a do Yahoo nas demais 96.591 linhas.
 - As 40 ações foram baixadas em 03/11/2026, até 30/10/2026, e a cópia está **congelada** em
   `dados/bruto/tv_1d/` (um arquivo por ação, com `dados/bruto/manifesto_tv.json`), como foi feito com o
   Yahoo. A conferência é refeita a partir dela, sem depender do site.

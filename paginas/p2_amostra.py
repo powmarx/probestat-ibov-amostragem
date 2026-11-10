@@ -113,6 +113,12 @@ st.markdown(D.frase_medias(R))
 st.caption('Erro-padrão esperado da média amostral: σ/√n × √((N − n)/(N − 1)), com o desvio-padrão σ da '
            'população. Diferença em erros-padrão = (média da amostra − média da população) ÷ erro-padrão.')
 
+st.markdown('**Medidas descritivas das cinco variáveis quantitativas, na amostra** (a mesma tabela do Painel 1)')
+C.tabela(D.tabela_medidas(a))
+st.caption('Assimetria e curtose: coeficientes de momento, sem correção de viés. A curtose é em excesso (0 na '
+           'distribuição normal). Volume financeiro em R$ milhões. Abaixo, escolha uma variável para ver as '
+           'mesmas medidas lado a lado com as da população.')
+
 var = st.selectbox('Variável', list(D.QUANTITATIVAS), key='p2_quant',
                    format_func=lambda c: f'{D.QUANTITATIVAS[c]["nome"]} ({D.QUANTITATIVAS[c]["unidade"]})')
 info = D.QUANTITATIVAS[var]
