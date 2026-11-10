@@ -1,4 +1,4 @@
-"""Trabalho final de Probabilidade e Estatística para IA: três painéis.
+"""Trabalho final de IA003 — Probabilidade e Estatística para IA: três painéis.
 
     D:\\venvs\\probestat312\\Scripts\\streamlit.exe run app.py
 """
@@ -14,5 +14,5 @@ paginas = st.navigation([
     st.Page('paginas/p2_amostra.py', title='2. Amostra', icon=':material/filter_alt:'),
     st.Page('paginas/p3_inferencia.py', title='3. Inferência e comparação', icon=':material/functions:'),
 ])
-st.sidebar.caption(f'{C.TITULO}  \n{C.AUTOR}  \nProbabilidade e Estatística para IA')
+st.sidebar.caption(f'{C.TITULO}  \n{C.AUTOR}  \nIA003 — Probabilidade e Estatística para IA')
 paginas.run()
