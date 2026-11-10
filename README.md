@@ -34,19 +34,20 @@ acordá-lo; o primeiro acesso pode levar cerca de 30 segundos.
   fechamento e volume) das 40 ações listadas abaixo e do Ibovespa, obtidas pela API pública de gráficos
   `https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}.SA?interval=1d&range=10y`. Cada ação tem
   sua página de histórico (links na tabela).
-- **As 40 ações e o critério de escolha:** são as que o coletor de dados do autor acompanha. Ele foi
-  montado na disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas Assistidas por
-  IA, para estudar se as três maiores ações do Ibovespa (VALE3, ITUB4 e PETR4) antecipam o índice. A
-  Atividade 01 escolheu 16 ações de liquidez variada, tratadas como componentes do índice, para ver se as
-  três maiores se destacavam entre elas. Na Atividade 02, essa cesta se mostrou líquida demais para medir o atraso do
-  índice (só 1% a 4% das ações ficavam sem negócio em cada minuto), e na Atividade 03 foram acrescentadas
-  24 ações de liquidez intermediária e baixa. A população é o conjunto definido por esse estudo, e não
-  uma amostra da bolsa nem as ações mais negociadas.
+- **As 40 ações e o critério de escolha:** são as que o coletor de dados do autor acompanha, montado na
+  disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA para
+  estudar se as maiores ações antecipam o Ibovespa. O critério foi a **liquidez variada**: ações de
+  liquidez alta, intermediária e baixa. O volume financeiro mediano por dia vai de R$ 28,8 mi (ALPA4) a
+  R$ 1.369,2 mi (PETR4), uma diferença de 48 vezes. Não são uma amostra da bolsa nem as ações mais
+  negociadas.
+- **O que as 40 representam:** juntas, elas reproduzem os movimentos do índice. A média do retorno do
+  dia das 40 ações tem correlação de 0,95 com o retorno do Ibovespa nos 10 anos (de 0,91 a 0,98 em cada
+  ano), e as duas vão na mesma direção em 90% dos dias. Cada ação sozinha acompanha bem menos.
 - **Na carteira atual do Ibovespa:** na carteira de 10/11/2026 (76 ativos), consultada na
   [B3](https://www.b3.com.br/pt_br/market-data-e-indices/indices/indices-amplos/indice-ibovespa-ibovespa-composicao-da-carteira.htm)
   e guardada em `dados/b3_carteira_ibov_20261110.json`, 34 das 40 ações estão no índice e somam 69,2% do
-  peso dele. Não estão ALPA4, CVCB3, IRBR3, PCAR3, SLCE3 e SMTO3. Da cesta original da Atividade 01,
-  ALPA4 saiu do índice em janeiro de 2025 e CVCB3 em janeiro de 2026. A composição do índice é revista a
+  peso dele. Não estão ALPA4, CVCB3, IRBR3, PCAR3, SLCE3 e SMTO3. ALPA4 saiu do índice em janeiro de
+  2025 e CVCB3, em janeiro de 2026. A composição do índice é revista a
   cada quatro meses, então essa lista vale para hoje, não para os 10 anos inteiros.
 - **Setor:** [B3, Classificação setorial](https://www.b3.com.br/pt_br/produtos-e-servicos/negociacao/renda-variavel/acoes/consultas/classificacao-setorial/),
   consultada em 31/10/2026 pela API de empresas listadas que essa página usa. A resposta está em
@@ -291,7 +292,7 @@ pip install -r requirements.txt
 python preparar_dados.py     # monta a população a partir do bruto congelado; grava parquet, csv e zip
 python amostra.py            # refaz o sorteio e o manifesto
 streamlit run app.py         # abre os painéis
-python -m pytest             # 77 testes
+python -m pytest             # 78 testes
 ```
 
 - `preparar_dados.py` e `amostra.py` regravam os arquivos de `dados/`. Com numpy 2.5.3, eles saem
@@ -306,10 +307,10 @@ python -m pytest             # 77 testes
 
 ## Limitações
 
-- **População restrita.** São as 40 ações que o coletor do autor acompanha, escolhidas em 2026 na
-  disciplina IA001 para estudar se as maiores ações antecipam o Ibovespa (16 ações de liquidez variada e
-  24 de liquidez intermediária e baixa, ver Fontes), de 31/10/2016 a 30/10/2026. Hoje, 34 delas estão
-  no Ibovespa, e a composição do índice mudou ao longo dos 10 anos. As
+- **População restrita.** São as 40 ações que o coletor do autor acompanha, escolhidas em 2026 pelo
+  critério de liquidez variada (ver Fontes), de 31/10/2016 a 30/10/2026. Juntas, elas reproduzem os
+  movimentos do Ibovespa (correlação de 0,95), e hoje 34 delas estão no índice, mas a composição dele
+  mudou ao longo dos 10 anos. As
   conclusões valem para esta população, não para a bolsa inteira nem para outros períodos (viés de
   sobrevivência: a escolha foi feita em 2026, entre ações ainda negociadas).
 - **Dependência entre linhas.** Ações do mesmo dia andam juntas. A inferência continua válida porque

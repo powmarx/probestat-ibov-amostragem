@@ -106,7 +106,7 @@ def nota_volume_baixo(d: pd.DataFrame, quem: str = 'população') -> str:
 
 
 CARTEIRA_IBOV = Path(__file__).resolve().parent / 'dados' / 'b3_carteira_ibov_20261110.json'
-# saídas do índice das ações da cesta original da Atividade 01, conferidas em notícias da época
+# datas de saída do índice conferidas em notícias da época (Valor Investe, 02/01/2025; Valor, 05/01/2026)
 SAIDAS_IBOV = {'ALPA4': 'janeiro de 2025', 'CVCB3': 'janeiro de 2026'}
 
 
@@ -121,15 +121,47 @@ def carteira_ibov(acoes) -> dict:
             'fora': [a for a in acoes if a not in peso], 'peso': sum(peso[a] for a in dentro) / 100}
 
 
+def representacao(P: pd.DataFrame) -> dict:
+    """Liquidez das 40 ações e quanto o conjunto acompanha o Ibovespa, dia a dia.
+
+    O retorno do índice no dia é a mediana do `ret_ibov` das linhas do dia (é o mesmo valor, salvo nas
+    linhas cuja ação ficou dias sem negócio)."""
+    liq = P.groupby('ativo')['fin'].median().sort_values()
+    d = P.groupby('data').agg(media=('ret', 'mean'), ibov=('ret_ibov', 'median'))
+    por_ano = d.groupby(d.index.year).apply(lambda g: g['media'].corr(g['ibov']))
+    return {'menos_liquida': liq.index[0], 'liq_min': float(liq.iloc[0]),
+            'mais_liquida': liq.index[-1], 'liq_max': float(liq.iloc[-1]),
+            'corr': float(d['media'].corr(d['ibov'])), 'corr_min_ano': float(por_ano.min()),
+            'corr_max_ano': float(por_ano.max()),
+            'mesma_direcao': float((np.sign(d['media']) == np.sign(d['ibov'])).mean())}
+
+
+def frase_criterio(P: pd.DataFrame) -> str:
+    r = representacao(P)
+    return (f'**As {P["ativo"].nunique()} ações e o critério de escolha.** São as que o coletor de dados do autor '
+            'acompanha, montado na disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas '
+            'Assistidas por IA para estudar se as maiores ações antecipam o Ibovespa. O critério foi a **liquidez '
+            'variada**: ações de liquidez alta, intermediária e baixa. O volume financeiro mediano por dia vai de '
+            f'{F.reais_mi(r["liq_min"])} ({r["menos_liquida"]}) a {F.reais_mi(r["liq_max"])} ({r["mais_liquida"]}), '
+            f'uma diferença de {F.inteiro(r["liq_max"] / r["liq_min"])} vezes. Não são uma amostra da bolsa nem as '
+            'ações mais negociadas.\n\n'
+            '**O que as ações representam.** Juntas, elas reproduzem os movimentos do índice: a média do retorno do '
+            f'dia das {P["ativo"].nunique()} ações tem correlação de {F.num(r["corr"], 2)} com o retorno do Ibovespa '
+            f'nos 10 anos (de {F.num(r["corr_min_ano"], 2)} a {F.num(r["corr_max_ano"], 2)} em cada ano), e as duas '
+            f'vão na mesma direção em {F.pct(r["mesma_direcao"], 0)} dos dias. Cada ação sozinha acompanha bem menos.')
+
+
 def frase_carteira_ibov(acoes) -> str:
     c = carteira_ibov(acoes)
     fora = c['fora']
     lista = fora[0] if len(fora) == 1 else ', '.join(fora[:-1]) + ' e ' + fora[-1]
-    saidas = [f'{a} saiu em {SAIDAS_IBOV[a]}' for a in fora if a in SAIDAS_IBOV]
+    saidas = [(a, SAIDAS_IBOV[a]) for a in fora if a in SAIDAS_IBOV]
+    saidas = ([f'{saidas[0][0]} saiu do índice em {saidas[0][1]}'] + [f'{a}, em {d}' for a, d in saidas[1:]]
+              if saidas else [])
     return (f'**Na carteira atual do índice.** Na carteira do Ibovespa de {c["data"]} ({c["ativos"]} ativos, '
             f'consultada na B3), {len(c["dentro"])} das {len(acoes)} ações estão no índice e somam '
             f'{F.pct(c["peso"], 1)} do peso dele. Não estão: {lista}.'
-            + (f' Da cesta original da Atividade 01, {" e ".join(saidas)}.' if saidas else '')
+            + (f' {" e ".join(saidas)}.' if saidas else '')
             + ' A composição do índice é revista a cada quatro meses, então essa lista vale para hoje, não para '
               'os 10 anos inteiros.')
 

@@ -34,15 +34,7 @@ with st.expander('Sobre a base de dados: fonte, construção e variáveis', icon
 de {r["acoes"]} ações da B3 e do Ibovespa. Página de histórico de cada ação, por exemplo
 [VALE3.SA]({C.FONTE_YAHOO}); dados obtidos pela API pública `{C.API_YAHOO}`.
 
-**As {r["acoes"]} ações e o critério de escolha.** São as que o coletor de dados do autor acompanha. Ele foi
-montado na disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA, para
-estudar se as três maiores ações do Ibovespa (VALE3, ITUB4 e PETR4) antecipam o índice. A Atividade 01 da
-disciplina escolheu 16 ações com liquidez variada, tratadas como componentes do índice, para ver se as três
-maiores se destacavam entre elas (duas já tinham saído do Ibovespa, como mostra o parágrafo seguinte). Na
-Atividade 02, essa cesta se mostrou líquida demais para medir o atraso do índice (só 1% a 4%
-das ações ficavam sem negócio em cada minuto), e na Atividade 03 foram acrescentadas 24 ações de liquidez
-intermediária e baixa. A população é, portanto, o conjunto definido por esse estudo, e não uma amostra da
-bolsa nem as ações mais negociadas.
+{C.md(D.frase_criterio(P))}
 
 {D.frase_carteira_ibov(P['ativo'].unique())}
 
