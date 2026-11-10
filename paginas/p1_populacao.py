@@ -34,10 +34,14 @@ with st.expander('Sobre a base de dados: fonte, construção e variáveis', icon
 de {r["acoes"]} ações da B3 e do Ibovespa. Página de histórico de cada ação, por exemplo
 [VALE3.SA]({C.FONTE_YAHOO}); dados obtidos pela API pública `{C.API_YAHOO}`.
 
-**As {r["acoes"]} ações.** São as que o coletor de dados do autor acompanha: 16 componentes do Ibovespa
-com liquidez variada, escolhidas nas primeiras atividades da disciplina IA001 – Análise e Visualização de
-Dados com Python e Ferramentas Assistidas por IA, e 24 ações de liquidez intermediária e baixa,
-acrescentadas na terceira atividade da mesma disciplina, em 2026. Não são as mais negociadas da bolsa.
+**As {r["acoes"]} ações e o critério de escolha.** São as que o coletor de dados do autor acompanha. Ele foi
+montado na disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA, para
+estudar se as três maiores ações do Ibovespa (VALE3, ITUB4 e PETR4) antecipam o índice. A Atividade 01 da
+disciplina escolheu 16 componentes do índice com liquidez variada, para ver se as três maiores se destacavam
+entre elas. Na Atividade 02, essa cesta se mostrou líquida demais para medir o atraso do índice (só 1% a 4%
+das ações ficavam sem negócio em cada minuto), e na Atividade 03 foram acrescentadas 24 ações de liquidez
+intermediária e baixa. A população é, portanto, o conjunto definido por esse estudo, e não uma amostra da
+bolsa nem as ações mais negociadas.
 
 **Fonte do setor.** [B3, Classificação setorial]({C.FONTE_B3}), consultada em 31/10/2026 pela API de
 empresas listadas que essa página usa.

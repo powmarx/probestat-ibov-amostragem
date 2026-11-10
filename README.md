@@ -34,10 +34,14 @@ acordá-lo; o primeiro acesso pode levar cerca de 30 segundos.
   fechamento e volume) das 40 ações listadas abaixo e do Ibovespa, obtidas pela API pública de gráficos
   `https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}.SA?interval=1d&range=10y`. Cada ação tem
   sua página de histórico (links na tabela).
-- **As 40 ações:** são as que o coletor de dados do autor acompanha, montado na disciplina IA001 –
-  Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA: 16 componentes do Ibovespa
-  com liquidez variada, escolhidas nas primeiras atividades da disciplina, e 24 ações de liquidez
-  intermediária e baixa, acrescentadas na terceira atividade, em 2026. Não são as mais negociadas da bolsa.
+- **As 40 ações e o critério de escolha:** são as que o coletor de dados do autor acompanha. Ele foi
+  montado na disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas Assistidas por
+  IA, para estudar se as três maiores ações do Ibovespa (VALE3, ITUB4 e PETR4) antecipam o índice. A
+  Atividade 01 escolheu 16 componentes do índice com liquidez variada, para ver se as três maiores se
+  destacavam entre elas. Na Atividade 02, essa cesta se mostrou líquida demais para medir o atraso do
+  índice (só 1% a 4% das ações ficavam sem negócio em cada minuto), e na Atividade 03 foram acrescentadas
+  24 ações de liquidez intermediária e baixa. A população é o conjunto definido por esse estudo, e não
+  uma amostra da bolsa nem as ações mais negociadas.
 - **Setor:** [B3, Classificação setorial](https://www.b3.com.br/pt_br/produtos-e-servicos/negociacao/renda-variavel/acoes/consultas/classificacao-setorial/),
   consultada em 31/10/2026 pela API de empresas listadas que essa página usa. A resposta está em
   `dados/b3_classificacao_setorial.json`.
@@ -295,8 +299,9 @@ python -m pytest             # 76 testes
 
 ## Limitações
 
-- **População restrita.** São as 40 ações que o coletor do autor acompanha (16 componentes do Ibovespa
-  e 24 de liquidez intermediária e baixa, escolhidas em 2026), de 31/10/2016 a 30/10/2026. As
+- **População restrita.** São as 40 ações que o coletor do autor acompanha, escolhidas em 2026 na
+  disciplina IA001 para estudar se as maiores ações antecipam o Ibovespa (16 componentes do índice com
+  liquidez variada e 24 de liquidez intermediária e baixa, ver Fontes), de 31/10/2016 a 30/10/2026. As
   conclusões valem para esta população, não para a bolsa inteira nem para outros períodos (viés de
   sobrevivência: a escolha foi feita em 2026, entre ações ainda negociadas).
 - **Dependência entre linhas.** Ações do mesmo dia andam juntas. A inferência continua válida porque
