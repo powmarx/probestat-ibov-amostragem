@@ -437,11 +437,13 @@ def grafico_simulacao(sim: dict, linha, altura: int = 460) -> go.Figure:
         dist = abs(linha.parametro * k - x_h0)
         eps = dist / float(np.std(est, ddof=1))          # erro-padrão = desvio das estimativas simuladas
         unid = ' p.p.' if u == '%' else u
+        # duas linhas curtas, para a nota não passar por cima das linhas da população e da amostra
         fig.add_annotation(xref='paper', yref='paper', x=0.01 if esquerda else 0.99, y=0.95,
                            xanchor='left' if esquerda else 'right', showarrow=False,
-                           text=(f'{"◀ " if esquerda else ""}H₀ = {F.num(x_h0, casas)}{u} fica fora da escala, '
+                           align='left' if esquerda else 'right',
+                           text=(f'{"◀ " if esquerda else ""}H₀ = {F.num(x_h0, casas)}{u} fica fora da escala,<br>'
                                  f'{F.num(dist, casas)}{unid} {"à esquerda" if esquerda else "à direita"} da '
-                                 f'população (cerca de {F.inteiro(eps)} erros-padrão){"" if esquerda else " ▶"}'),
+                                 f'população<br>(cerca de {F.inteiro(eps)} erros-padrão){"" if esquerda else " ▶"}'),
                            font=dict(size=14, color='#555555'), bgcolor='rgba(255,255,255,0.85)')
     return fig
 
