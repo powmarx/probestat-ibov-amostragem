@@ -326,6 +326,23 @@ python -m pytest             # 78 testes
   decisão muda.
 - **Setor.** É a classificação atual da B3, aplicada aos 10 anos.
 
+## Próximos passos
+
+Este trabalho é uma etapa de um objetivo maior do autor: construir, com IA (LLM e RAG), um sistema que
+infira compras de ativos e preveja o comportamento de um ativo específico. Os resultados daqui mostram o
+que esse sistema terá de enfrentar:
+
+- **Efeito pequeno diante do ruído.** O retorno médio diário da população é de 0,053%, com
+  desvio-padrão de 2,87%. Uma amostra de 2.343 linhas detecta esse efeito em cerca de 15% das vezes.
+- **Caudas que decidem o resultado.** Três linhas do dia do circuit breaker mudaram a conclusão da M2.
+- **Testes múltiplos.** Cada regra nova testada aumenta a chance de um acerto por acaso.
+- **O mercado por trás de cada ação.** A média das 40 ações tem correlação de 0,95 com o Ibovespa. Um
+  sinal só tem valor se superar o índice.
+- **O tempo da informação.** Um sinal só pode usar o que já se sabia no dia. Um LLM treinado depois do
+  período testado pode levar o futuro para dentro do teste.
+
+Este trabalho não faz previsões nem recomenda a compra de nenhum ativo.
+
 ## Referências
 
 - Bolfarine, H.; Bussab, W. O. *Elementos de Amostragem*. São Paulo: Blucher, 2005.
