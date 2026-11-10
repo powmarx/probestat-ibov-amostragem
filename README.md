@@ -36,7 +36,8 @@ acordá-lo; o primeiro acesso pode levar cerca de 30 segundos.
   sua página de histórico (links na tabela).
 - **As 40 ações e o critério de escolha:** são as que o coletor de dados do autor acompanha, montado na
   disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA para
-  estudar se as maiores ações antecipam o Ibovespa. O critério foi a **liquidez variada**: ações de
+  estudar se as três ações de maior peso no Ibovespa (VALE3, ITUB4 e PETR4, que hoje somam 27,6% do
+  índice) antecipam os movimentos dele. O critério foi a **liquidez variada**: ações de
   liquidez alta, intermediária e baixa. O volume financeiro mediano por dia vai de R$ 28,8 mi (ALPA4) a
   R$ 1.369,2 mi (PETR4), uma diferença de 48 vezes. Não são uma amostra da bolsa nem as ações mais
   negociadas.
@@ -46,8 +47,7 @@ acordá-lo; o primeiro acesso pode levar cerca de 30 segundos.
 - **Na carteira atual do Ibovespa:** na carteira de 10/11/2026 (76 ativos), consultada na
   [B3](https://www.b3.com.br/pt_br/market-data-e-indices/indices/indices-amplos/indice-ibovespa-ibovespa-composicao-da-carteira.htm)
   e guardada em `dados/b3_carteira_ibov_20261110.json`, 34 das 40 ações estão no índice e somam 69,2% do
-  peso dele. Não estão ALPA4, CVCB3, IRBR3, PCAR3, SLCE3 e SMTO3. ALPA4 saiu do índice em janeiro de
-  2025 e CVCB3, em janeiro de 2026. A composição do índice é revista a
+  peso dele. A composição do índice é revista a
   cada quatro meses, então essa lista vale para hoje, não para os 10 anos inteiros.
 - **Setor:** [B3, Classificação setorial](https://www.b3.com.br/pt_br/produtos-e-servicos/negociacao/renda-variavel/acoes/consultas/classificacao-setorial/),
   consultada em 31/10/2026 pela API de empresas listadas que essa página usa. A resposta está em

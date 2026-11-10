@@ -106,8 +106,6 @@ def nota_volume_baixo(d: pd.DataFrame, quem: str = 'população') -> str:
 
 
 CARTEIRA_IBOV = Path(__file__).resolve().parent / 'dados' / 'b3_carteira_ibov_20261110.json'
-# datas de saída do índice conferidas em notícias da época (Valor Investe, 02/01/2025; Valor, 05/01/2026)
-SAIDAS_IBOV = {'ALPA4': 'janeiro de 2025', 'CVCB3': 'janeiro de 2026'}
 
 
 def carteira_ibov(acoes) -> dict:
@@ -117,8 +115,10 @@ def carteira_ibov(acoes) -> dict:
     acoes = sorted(set(acoes))
     dentro = [a for a in acoes if a in peso]
     dia, mes, ano = j['header']['date'].split('/')
+    top3 = sorted(peso, key=peso.get, reverse=True)[:3]
     return {'data': f'{dia}/{mes}/20{ano}', 'ativos': int(j['page']['totalRecords']), 'dentro': dentro,
-            'fora': [a for a in acoes if a not in peso], 'peso': sum(peso[a] for a in dentro) / 100}
+            'fora': [a for a in acoes if a not in peso], 'peso': sum(peso[a] for a in dentro) / 100,
+            'top3': top3, 'peso_top3': sum(peso[a] for a in top3) / 100}
 
 
 def representacao(P: pd.DataFrame) -> dict:
@@ -138,9 +138,12 @@ def representacao(P: pd.DataFrame) -> dict:
 
 def frase_criterio(P: pd.DataFrame) -> str:
     r = representacao(P)
+    c = carteira_ibov(P['ativo'].unique())
+    t3 = c['top3']
     return (f'**As {P["ativo"].nunique()} ações e o critério de escolha.** São as que o coletor de dados do autor '
             'acompanha, montado na disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas '
-            'Assistidas por IA para estudar se as maiores ações antecipam o Ibovespa. O critério foi a **liquidez '
+            f'Assistidas por IA para estudar se as três ações de maior peso no Ibovespa ({t3[0]}, {t3[1]} e {t3[2]}, '
+            f'que hoje somam {F.pct(c["peso_top3"], 1)} do índice) antecipam os movimentos dele. O critério foi a **liquidez '
             'variada**: ações de liquidez alta, intermediária e baixa. O volume financeiro mediano por dia vai de '
             f'{F.reais_mi(r["liq_min"])} ({r["menos_liquida"]}) a {F.reais_mi(r["liq_max"])} ({r["mais_liquida"]}), '
             f'uma diferença de {F.inteiro(r["liq_max"] / r["liq_min"])} vezes. Não são uma amostra da bolsa nem as '
@@ -153,17 +156,10 @@ def frase_criterio(P: pd.DataFrame) -> str:
 
 def frase_carteira_ibov(acoes) -> str:
     c = carteira_ibov(acoes)
-    fora = c['fora']
-    lista = fora[0] if len(fora) == 1 else ', '.join(fora[:-1]) + ' e ' + fora[-1]
-    saidas = [(a, SAIDAS_IBOV[a]) for a in fora if a in SAIDAS_IBOV]
-    saidas = ([f'{saidas[0][0]} saiu do índice em {saidas[0][1]}'] + [f'{a}, em {d}' for a, d in saidas[1:]]
-              if saidas else [])
     return (f'**Na carteira atual do índice.** Na carteira do Ibovespa de {c["data"]} ({c["ativos"]} ativos, '
-            f'consultada na B3), {len(c["dentro"])} das {len(acoes)} ações estão no índice e somam '
-            f'{F.pct(c["peso"], 1)} do peso dele. Não estão: {lista}.'
-            + (f' {" e ".join(saidas)}.' if saidas else '')
-            + ' A composição do índice é revista a cada quatro meses, então essa lista vale para hoje, não para '
-              'os 10 anos inteiros.')
+            f'consultada na B3), {len(c["dentro"])} das {len(set(acoes))} ações estão no índice e somam '
+            f'{F.pct(c["peso"], 1)} do peso dele. A composição do índice é revista a cada quatro meses, então essa '
+            'lista vale para hoje, não para os 10 anos inteiros.')
 
 
 def tabela_conferencia(d: pd.DataFrame) -> pd.DataFrame:

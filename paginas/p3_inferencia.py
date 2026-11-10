@@ -293,7 +293,7 @@ st.markdown(f"""
   estão {len(D.carteira_ibov(P['ativo'].unique())['dentro'])} das 40, mas a composição do índice mudou ao longo dos
   10 anos. As conclusões valem para
   esta população, não para a bolsa inteira nem para outros períodos (viés de sobrevivência: a escolha foi feita
-  em 2026, entre ações ainda negociadas; as que saíram da bolsa antes disso não estão aqui).
+  em 2026, entre ações ainda negociadas. As que saíram da bolsa antes disso não estão aqui).
 - **Dependência entre linhas.** Ações do mesmo dia andam juntas. A inferência continua válida porque vem do
   sorteio (AAS de uma população finita, n/N = {F.pct(n / N, 1)}), e a simulação confirma a cobertura de ~95%.
 - **Qualidade da fonte.** A base do Yahoo foi conferida com o TradingView: {F.pct(conf_tv.get('idêntico', 0) / N, 1)}

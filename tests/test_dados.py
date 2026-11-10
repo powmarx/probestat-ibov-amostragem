@@ -174,9 +174,9 @@ def test_carteira_ibov(P):
     assert c['data'] == '10/11/2026' and c['ativos'] == 76
     assert len(c['dentro']) == 34 and c['fora'] == ['ALPA4', 'CVCB3', 'IRBR3', 'PCAR3', 'SLCE3', 'SMTO3']
     assert c['peso'] == pytest.approx(0.692, abs=0.001)
+    assert c['top3'] == ['VALE3', 'ITUB4', 'PETR4'] and c['peso_top3'] == pytest.approx(0.276, abs=0.001)
     frase = D.frase_carteira_ibov(P['ativo'].unique())
-    assert '34 das 40 ações' in frase and 'ALPA4 saiu do índice em janeiro de 2025 e CVCB3, em janeiro de 2026' in frase
-    assert 'Atividade' not in frase
+    assert '34 das 40 ações estão no índice e somam 69,2%' in frase and 'ALPA4' not in frase
 
 
 def test_criterio_e_representacao(P):
@@ -188,6 +188,7 @@ def test_criterio_e_representacao(P):
     assert 0.91 <= r['corr_min_ano'] and r['corr_max_ano'] <= 0.98
     t = D.frase_criterio(P)
     assert 'liquidez variada' in t and 'correlação de 0,95' in t and 'Atividade' not in t
+    assert '(VALE3, ITUB4 e PETR4, que hoje somam 27,6% do índice)' in t
 
 
 # ---------------------------------------------------------------- setores
