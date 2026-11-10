@@ -4,6 +4,7 @@ dados/populacao.csv
 # documentos de trabalho, fora do repositório público
 docs/plano.md
 docs/roteiro_video.md
+docs/verificacao.md
 
 # caches
 __pycache__/
