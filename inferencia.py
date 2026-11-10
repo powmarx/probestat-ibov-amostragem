@@ -6,8 +6,8 @@ Métodos (fixados no plano do trabalho antes do sorteio; resumo no README):
   α = 5% em todos. A correção de população finita (√(1 − n/N) ≈ 0,988) é citada, não aplicada.
 
 Os parâmetros populacionais são calculados diretamente na população; a inferência usa só a amostra.
-A simulação de 2.000 AAS (semente 1) mede, para cada hipótese, a taxa de rejeição (poder, ou erro
-tipo I quando H0 é verdadeira) e a cobertura do IC 95%.
+A simulação de 2.000 AAS (semente 1) mede, para cada hipótese, a taxa de rejeição e a cobertura do
+IC 95%. Na população nenhuma H0 é verdadeira (h0_na_populacao), então a taxa de rejeição é o poder.
 
 Uso:  python inferencia.py      # imprime o resultado das 6 hipóteses na amostra oficial
 """
@@ -310,17 +310,27 @@ def simular(P: pd.DataFrame, n: int, r: int = N_SIMULACOES, semente: int = SEMEN
             'r': r, 'n': n, 'semente': semente}
 
 
-def h0_na_populacao(taxa_rejeicao: float, r: int = N_SIMULACOES) -> str:
-    """H0 'verdadeira na prática' quando a taxa de rejeição simulada não se distingue de α.
+def h0_na_populacao(parametro: float, valor_h0: float, alternativa: str) -> str:
+    """H0 é verdadeira ou falsa comparando o parâmetro calculado na população com o valor de H0.
 
-    Com r réplicas, se H0 fosse verdadeira a taxa ficaria em α ± 1,96·√(α(1−α)/r) (4,0% a 6,0% com
-    r = 2.000). Acima disso, a população se afasta de H0 o bastante para o teste perceber: H0 é falsa.
+    Bilateral (H0: θ = θ0): verdadeira só se o parâmetro for igual a θ0. Unilateral à direita
+    (H0: θ ≤ θ0): verdadeira se o parâmetro for ≤ θ0. Unilateral à esquerda (H0: θ ≥ θ0): se for ≥ θ0.
     """
-    return 'verdadeira (na prática)' if taxa_rejeicao <= limite_h0_verdadeira(r) else 'falsa'
+    if alternativa == 'two-sided':
+        verdadeira = bool(np.isclose(parametro, valor_h0, rtol=0, atol=1e-12))
+    elif alternativa == 'greater':
+        verdadeira = parametro <= valor_h0
+    else:
+        verdadeira = parametro >= valor_h0
+    return 'verdadeira' if verdadeira else 'falsa'
 
 
-def limite_h0_verdadeira(r: int = N_SIMULACOES) -> float:
-    """Maior taxa de rejeição compatível com H0 verdadeira em r réplicas: α + 1,96·√(α(1−α)/r)."""
+def limite_poder_igual_alfa(r: int = N_SIMULACOES) -> float:
+    """Maior taxa de rejeição que, em r réplicas, ainda não se distingue de α: α + 1,96·√(α(1−α)/r).
+
+    Serve só para descrever o poder ("não se distingue de α nesta simulação"); não decide se H0 é
+    verdadeira, o que depende só da população (h0_na_populacao).
+    """
     return float(ALFA + stats.norm.ppf(0.975) * np.sqrt(ALFA * (1 - ALFA) / r))
 
 
@@ -330,19 +340,27 @@ def amostra_exercicio(P: pd.DataFrame, n: int, semente: int) -> pd.DataFrame:
     return P.iloc[ids]
 
 
-def licao(resultado: str, h0_populacao: str, taxa_rejeicao: float) -> str:
-    """Leitura do resultado, gerada a partir da decisão, da verdade na população e da simulação."""
+def licao(resultado: str, h0_populacao: str, taxa_rejeicao: float, distancia: str = '',
+          poder_igual_alfa: bool = False) -> str:
+    """Leitura do resultado, gerada a partir da decisão, da verdade na população e da simulação.
+
+    `distancia`: quanto o parâmetro da população se afasta do valor de H0, já formatado.
+    `poder_igual_alfa`: o poder simulado não se distingue de α (limite_poder_igual_alfa)."""
     taxa = F.pct(taxa_rejeicao, 1)
     nao = F.pct(1 - taxa_rejeicao, 1)
+    if resultado == 'erro tipo II' and poder_igual_alfa:
+        return (f'Erro tipo II, mas inevitável: H₀ é falsa na população por só {distancia}, uma diferença que '
+                f'nenhuma amostra deste tamanho percebe. O poder do teste é {taxa}, que não se distingue de '
+                'α = 5% nesta simulação: o teste se comporta como se H₀ fosse verdadeira.')
     if resultado == 'erro tipo II':
         return (f'Erro tipo II: H₀ é falsa na população, mas esta amostra não a rejeitou. O poder do teste é '
                 f'{taxa}: em {nao} das amostras possíveis isso aconteceria.')
     if resultado == 'erro tipo I':
-        return (f'Erro tipo I: H₀ é verdadeira na prática, mas foi rejeitada. Isso acontece em {taxa} das '
+        return (f'Erro tipo I: H₀ é verdadeira na população, mas foi rejeitada. Isso acontece em {taxa} das '
                 'amostras, perto de α = 5%.')
     if h0_populacao == 'falsa':
         return f'Acerto: o efeito existe na população e o teste o detectou, como fariam {taxa} das amostras.'
-    return (f'Acerto: H₀ é verdadeira na prática e não foi rejeitada. Rejeitá-la seria um erro tipo I, que '
+    return (f'Acerto: H₀ é verdadeira na população e não foi rejeitada. Rejeitá-la seria um erro tipo I, que '
             f'acontece em {taxa} das amostras, perto de α = 5%.')
 
 
@@ -360,27 +378,39 @@ def tabela_comparacao(linhas: list[Linha], sim: dict) -> pd.DataFrame:
             lo, hi = f'{F.num(r.ic[0])}%', f'{F.num(r.ic[1])}%'
             dif = F.num(r.media - l.parametro) + ' p.p.'
         d = dv.loc[h.codigo]
+        resultado = d['rotulo']
         out.append({'hipótese': h.codigo + (' (compl.)' if h.complementar else ''), 'H₀': h.h0,
                     'população': par, 'amostra': est, 'diferença': dif, 'IC 95%': f'[{lo}; {hi}]',
                     'IC contém a população': 'sim' if l.ic_cobre else 'não',
                     'valor-p': F.pval(r.p_valor), 'decisão': d['decisao'],
-                    'H₀ na população': d['h0_populacao'], 'resultado': d['resultado']})
+                    'H₀ na população': d['h0_populacao'], 'resultado': resultado})
     return pd.DataFrame(out)
 
 
+def distancia_h0(l: Linha) -> str:
+    """Distância entre o parâmetro da população e o valor de H0, em pontos percentuais."""
+    k = 100 if l.hipotese.tipo == 'proporcao' else 1
+    return F.num(abs(l.parametro - l.hipotese.valor_h0) * k, 2 if l.hipotese.tipo == 'proporcao' else 3) + ' p.p.'
+
+
 def decisao_x_verdade(linhas: list[Linha], sim: dict) -> pd.DataFrame:
+    """Decisão da amostra oficial × verdade na população (o parâmetro calculado nas N linhas)."""
     out = []
     for l in linhas:
-        c = l.hipotese.codigo
-        verdade = h0_na_populacao(sim['rejeicao'][c], sim['r'])
+        h, c = l.hipotese, l.hipotese.codigo
+        verdade = h0_na_populacao(l.parametro, h.valor_h0, h.alternativa)
         rejeita = l.resultado.rejeita
         if verdade == 'falsa':
             tipo = 'acerto' if rejeita else 'erro tipo II'
         else:
             tipo = 'erro tipo I' if rejeita else 'acerto'
-        out.append({'codigo': c, 'complementar': l.hipotese.complementar, 'h0_populacao': verdade,
+        igual_alfa = sim['rejeicao'][c] <= limite_poder_igual_alfa(sim['r'])
+        out.append({'codigo': c, 'complementar': h.complementar, 'h0_populacao': verdade,
+                    'distancia': distancia_h0(l),
                     'decisao': 'rejeita H₀' if rejeita else 'não rejeita H₀', 'resultado': tipo,
-                    'taxa_rejeicao': sim['rejeicao'][c], 'cobertura': sim['cobertura'][c]})
+                    'rotulo': tipo + (' (poder ≈ α)' if igual_alfa and tipo == 'erro tipo II' else ''),
+                    'taxa_rejeicao': sim['rejeicao'][c], 'cobertura': sim['cobertura'][c],
+                    'poder_igual_alfa': igual_alfa})
     return pd.DataFrame(out)
 
 

@@ -162,7 +162,7 @@ máximo de +139,13% (PCAR3, 01/02/2017) continua na base, agora confirmado pelas
 | P1-b | 1.791 | 1.789 | 1.887 | 1.887 |
 | M2-b | 1.707 | 1.723 | 1.917 | 1.923 |
 
-O poder da M2 passa de 77,4% para 78,7%. A P2 continua "verdadeira (na prática)", com 5,35%.
+O poder da M2 passa de 77,4% para 78,7%. A taxa de rejeição da P2 continua em 5,35%.
 
 ## 9. Ordem dos fatos (transparência)
 

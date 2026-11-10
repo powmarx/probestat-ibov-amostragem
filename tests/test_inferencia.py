@@ -156,16 +156,25 @@ def test_simulacao_reproduz_o_plano(sim):
 
 def test_decisao_x_verdade(linhas, sim):
     d = I.decisao_x_verdade(list(linhas.values()), sim).set_index('codigo')
-    assert d.loc['P2', 'h0_populacao'] == 'verdadeira (na prática)'
-    assert (d.drop(index='P2')['h0_populacao'] == 'falsa').all()
-    assert d['resultado'].to_dict() == {'P1': 'acerto', 'P2': 'acerto', 'M1': 'erro tipo II',
+    assert (d['h0_populacao'] == 'falsa').all()                    # nenhum parâmetro satisfaz H0 na população
+    assert d['resultado'].to_dict() == {'P1': 'acerto', 'P2': 'erro tipo II', 'M1': 'erro tipo II',
                                         'M2': 'erro tipo II', 'P1-b': 'acerto', 'M2-b': 'erro tipo II'}
+    assert d['poder_igual_alfa'].to_dict() == {'P1': False, 'P2': True, 'M1': False, 'M2': False,
+                                               'P1-b': False, 'M2-b': False}
+    assert d.loc['P2', 'distancia'] == '0,14 p.p.' and d.loc['M2', 'distancia'] == '0,090 p.p.'
+
+
+def test_h0_na_populacao():
+    assert I.h0_na_populacao(0.5, 0.5, 'two-sided') == 'verdadeira'
+    assert I.h0_na_populacao(0.4986, 0.5, 'two-sided') == 'falsa'
+    assert I.h0_na_populacao(0.60, 2 / 3, 'greater') == 'verdadeira'      # H0: p ≤ 2/3
+    assert I.h0_na_populacao(0.6946, 2 / 3, 'greater') == 'falsa'
 
 
 # ---------------------------------------------------------------- Painel 3
-def test_limite_h0_verdadeira():
-    assert I.limite_h0_verdadeira(2000) == pytest.approx(0.05 + 1.959964 * np.sqrt(0.05 * 0.95 / 2000), abs=1e-6)
-    assert round(I.limite_h0_verdadeira(2000) * 100, 2) == 5.96
+def test_limite_poder_igual_alfa():
+    assert I.limite_poder_igual_alfa(2000) == pytest.approx(0.05 + 1.959964 * np.sqrt(0.05 * 0.95 / 2000), abs=1e-6)
+    assert round(I.limite_poder_igual_alfa(2000) * 100, 2) == 5.96
 
 
 def test_amostra_exercicio_e_outra_aas(P, A):
@@ -179,12 +188,15 @@ def test_licao():
     assert I.licao('erro tipo II', 'falsa', 0.7865).startswith('Erro tipo II') and '21,4%' in I.licao(
         'erro tipo II', 'falsa', 0.7865)
     assert 'efeito existe' in I.licao('acerto', 'falsa', 1.0)
-    assert 'erro tipo I' in I.licao('acerto', 'verdadeira (na prática)', 0.0535)
+    p2 = I.licao('erro tipo II', 'falsa', 0.0535, '0,14 p.p.', True)
+    assert p2.startswith('Erro tipo II, mas inevitável') and '0,14 p.p.' in p2 and 'não se distingue de' in p2
+    assert 'erro tipo I' in I.licao('acerto', 'verdadeira', 0.05)
 
 
 def test_tabela_comparacao(linhas, sim):
     t = I.tabela_comparacao(list(linhas.values()), sim).set_index('hipótese')
     assert list(t.index) == ['P1', 'P2', 'M1', 'M2', 'P1-b (compl.)', 'M2-b (compl.)']
     assert (t['IC contém a população'] == 'sim').all()
-    assert t.loc['M2', 'resultado'] == 'erro tipo II' and t.loc['P2', 'H₀ na população'] == 'verdadeira (na prática)'
+    assert t.loc['M2', 'resultado'] == 'erro tipo II' and t.loc['P2', 'H₀ na população'] == 'falsa'
+    assert t.loc['P2', 'resultado'] == 'erro tipo II (poder ≈ α)'
     assert t.loc['P1', 'população'] == '69,46%' and t.loc['M2', 'amostra'] == '0,047%'

@@ -27,7 +27,7 @@ linhas = _analise(versao)
 L = {l.hipotese.codigo: l for l in linhas}
 sim = _simulacao(versao, n)
 dv = I.decisao_x_verdade(linhas, sim).set_index('codigo')
-lim_h0 = I.limite_h0_verdadeira(sim['r'])
+lim_alfa = I.limite_poder_igual_alfa(sim['r'])
 
 st.title('Painel 3 — Inferência estatística e comparação dos resultados')
 st.markdown(
@@ -123,7 +123,8 @@ for aba, l in zip(abas, linhas):
 
         st.markdown(f'**Conclusão:** {I.conclusao(l)}')
         st.markdown(f'**Na prática:** {LEITURA[h.codigo][0 if r.rejeita else 1]}')
-        st.markdown(f'**Comparação com a população:** {I.licao(d["resultado"], d["h0_populacao"], d["taxa_rejeicao"])}')
+        st.markdown('**Comparação com a população:** ' + I.licao(d['resultado'], d['h0_populacao'], d['taxa_rejeicao'],
+                                                                 d['distancia'], d['poder_igual_alfa']))
 
         conf = l.conferencia
         if h.tipo == 'proporcao':
@@ -167,21 +168,31 @@ st.markdown(
     f'**Estimativa e intervalo.** Em {cobrem} das {len(linhas)} hipóteses o intervalo de 95% da amostra contém o '
     'valor da população. A estimativa pontual quase nunca é igual ao valor real; o intervalo diz quanto ela pode '
     'errar só pelo acaso do sorteio.')
+verdadeiras = [c for c in dv.index if dv.loc[c, 'h0_populacao'] == 'verdadeira']
+indetectaveis = [c for c in erros2 if dv.loc[c, 'poder_igual_alfa']]
 st.markdown(
     f'**Decisões.** {len(linhas) - len(erros2)} decisões corretas e {len(erros2)} erros tipo II '
     f'({", ".join(erros2) or "nenhum"}). Nos erros tipo II o intervalo contém o valor real, mas também o valor de '
-    'H₀: a amostra não tem precisão para separar os dois. O erro está na decisão do teste, não na estimativa.')
+    'H₀: a amostra não tem precisão para separar os dois. O erro está na decisão do teste, não na estimativa.'
+    + (f' Na {", ".join(indetectaveis)}, o erro era inevitável: a diferença é pequena demais para qualquer amostra '
+       'deste tamanho.' if indetectaveis else ''))
 with st.expander('Como se sabe se H₀ é verdadeira na população', icon=':material/help:'):
     st.markdown(
-        f'Na população, nenhum parâmetro é exatamente igual ao valor de H₀ (a P2, por exemplo, dá '
-        f'{F.pct(L["P2"].parametro)}, a {F.num(abs(L["P2"].parametro - 0.5) * 100, 2)} p.p. de 50%). Chamar a P2 de '
-        '"falsa" seria enganoso, porque nenhuma amostra deste tamanho percebe uma diferença tão pequena. Por isso '
-        f'a coluna "H₀ na população" usa a simulação da seção 3: se H₀ fosse verdadeira, a taxa de rejeição em '
-        f'{F.inteiro(sim["r"])} amostras ficaria em α ± 1,96 erros-padrão, isto é, até **{F.pct(lim_h0, 2)}**. Até '
-        'esse limite, H₀ é "verdadeira (na prática)"; acima, "falsa".')
+        f'Comparando o valor de H₀ com o parâmetro calculado nas {F.inteiro(N)} linhas da população. '
+        + (f'Em nenhuma das {len(linhas)} hipóteses H₀ é verdadeira, então a taxa de rejeição da seção 3 é o '
+           '**poder** de cada teste, e não há erro tipo I real neste trabalho. ' if not verdadeiras else '')
+        + 'Ser falsa não quer dizer ser detectável: o que decide é o tamanho da diferença diante do erro-padrão. '
+        f'Na P2, a população dá {F.pct(L["P2"].parametro)}, a só {dv.loc["P2", "distancia"]} de 50%; o teste rejeita '
+        f'em {F.pct(dv.loc["P2", "taxa_rejeicao"], 2)} das amostras, o que não se distingue de α = 5% nesta simulação '
+        f'(até {F.pct(lim_alfa, 2)} com {F.inteiro(sim["r"])} amostras). Ou seja, ela se comporta como se H₀ fosse '
+        'verdadeira: a taxa de rejeição dela é praticamente a de um erro tipo I.')
     st.dataframe(pd.DataFrame({
-        'hipótese': dv.index, 'taxa de rejeição em 2.000 amostras': dv['taxa_rejeicao'].map(lambda v: F.pct(v, 2)),
-        'H₀ na população': dv['h0_populacao']}), hide_index=True, width='stretch')
+        'hipótese': dv.index,
+        'H₀': [L[c].hipotese.h0 for c in dv.index],
+        'distância entre a população e H₀': dv['distancia'],
+        'H₀ na população': dv['h0_populacao'],
+        f'poder (rejeição em {F.inteiro(sim["r"])} amostras)': dv['taxa_rejeicao'].map(lambda v: F.pct(v, 2))}),
+        hide_index=True, width='stretch')
 
 b = I.bonferroni(linhas)
 st.markdown(
@@ -198,9 +209,9 @@ st.markdown(
     'seis testes foram refeitos.')
 st.dataframe(pd.DataFrame({
     'hipótese': dv.index,
-    'rejeita H₀ (poder, ou erro tipo I se H₀ é verdadeira)': dv['taxa_rejeicao'].map(lambda v: F.pct(v, 2)),
+    'rejeita H₀ (poder)': dv['taxa_rejeicao'].map(lambda v: F.pct(v, 2)),
     'IC 95% contém a população': dv['cobertura'].map(lambda v: F.pct(v, 2)),
-    'decisão da amostra oficial': dv['decisao'], 'resultado': dv['resultado']}), hide_index=True, width='stretch')
+    'decisão da amostra oficial': dv['decisao'], 'resultado': dv['rotulo']}), hide_index=True, width='stretch')
 st.markdown(
     f'Os intervalos de 95% cobrem o valor da população em {F.pct(min(sim["cobertura"].values()), 1)} a '
     f'{F.pct(max(sim["cobertura"].values()), 1)} das amostras, como prometido: o método funciona mesmo com '
