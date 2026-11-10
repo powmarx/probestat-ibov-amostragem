@@ -104,8 +104,8 @@ with g2:
 st.markdown(C.md(D.frase_forma(f[var], info['unidade'], positiva=info.get('positiva', False))))
 
 st.subheader('Medidas descritivas das cinco variáveis quantitativas')
-st.dataframe(D.tabela_medidas(f), hide_index=True, width='stretch')
-st.caption('Assimetria e curtose: coeficientes de momento, sem correção de viés; curtose em excesso (0 na '
+C.tabela(D.tabela_medidas(f))
+st.caption('Assimetria e curtose: coeficientes de momento, sem correção de viés. A curtose é em excesso (0 na '
            'distribuição normal). Assimetria e curtose não têm unidade. '
            'Volume financeiro em R$ milhões.')
 
@@ -117,7 +117,7 @@ b1, b2 = st.columns([1.6, 1])
 with b1:
     C.mostrar(C.grafico_barras([(f, 'População', C.COR_POP)], q), 'p1_barras')
 with b2:
-    st.dataframe(C.tabela_frequencias(f, q), hide_index=True, width='stretch')
+    C.tabela(C.tabela_frequencias(f, q))
 for nota in (D.NOTAS_QUALITATIVAS.get(q), D.nota_base_faixa(f, q, C.LINK_HUMOR_P1)):
     if nota:
         st.caption(nota)

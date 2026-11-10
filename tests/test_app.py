@@ -80,7 +80,7 @@ def test_painel3_simulacao_e_sorteio(p3):
         assert not p3.exception, (c, p3.exception)
     p3.button(key='p3_sortear').click().run()
     assert not p3.exception
-    assert any('semente 10001' in str(df.value.columns.tolist()) for df in p3.dataframe)
+    assert any('semente 10001' in str(t.value.columns.tolist()) for t in p3.table)
 
 
 @pytest.fixture

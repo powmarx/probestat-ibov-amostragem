@@ -108,7 +108,7 @@ pares = [(f, 'População', C.COR_POP), (a, 'Amostra', C.COR_AMOSTRA)]
 
 st.subheader('Variáveis quantitativas')
 R = D.resumo_medias(f, a)
-st.dataframe(D.tabela_resumo_medias(R), hide_index=True, width='stretch')
+C.tabela(D.tabela_resumo_medias(R))
 st.markdown(D.frase_medias(R))
 st.caption('Erro-padrão esperado da média amostral: σ/√n × √((N − n)/(N − 1)), com o desvio-padrão σ da '
            'população. Diferença em erros-padrão = (média da amostra − média da população) ÷ erro-padrão.')

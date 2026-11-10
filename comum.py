@@ -164,15 +164,26 @@ def grafico_histograma(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: s
     bordas = base['bordas']
     largura = bordas[1] - bordas[0]
     fig = go.Figure()
-    for d, nome, cor in conjuntos:
+    varios = len(conjuntos) > 1
+    linhas_pop = []
+    for i, (d, nome, cor) in enumerate(conjuntos):
         x = d[coluna].dropna()
         v = np.log10(x[x > 0]) if log else x
         cont, _ = np.histogram(v[(v >= bordas[0]) & (v <= bordas[-1])], bins=bordas)
-        fig.add_bar(x=base['centros'], y=100 * cont / len(v), width=largura, name=nome,
-                    marker_color=cor, opacity=0.85 if len(conjuntos) == 1 else 0.55,
-                    hovertemplate='%{y:.2f}% das linhas<extra>' + nome + '</extra>')
-    if len(conjuntos) > 1:
-        fig.update_layout(barmode='overlay')
+        y = 100 * cont / len(v)
+        if varios and i == 0:
+            # comparação: a população como contorno em degrau, por cima das barras da amostra. Barras
+            # transparentes sobrepostas viravam uma terceira cor que não estava na legenda.
+            linhas_pop.append(go.Scatter(
+                x=list(bordas), y=list(y) + [y[-1]], mode='lines', line_shape='hv', name=nome,
+                line=dict(color=cor, width=2.5), customdata=list(y) + [y[-1]], legendrank=1,
+                hovertemplate='%{customdata:.2f}% das linhas<extra>' + nome + '</extra>'))
+        else:
+            fig.add_bar(x=base['centros'], y=y, width=largura, name=nome,
+                        marker_color=cor, opacity=0.85 if not varios else 0.6, legendrank=2,
+                        hovertemplate='%{y:.2f}% das linhas<extra>' + nome + '</extra>')
+    for tr in linhas_pop:
+        fig.add_trace(tr)
     unidade = 'R$ milhões, escala log' if log else info['unidade']
     layout(fig, altura, x=f'{info["nome"]} ({unidade})', y='% das linhas', legenda=len(conjuntos) > 1)
     if log:
@@ -191,11 +202,23 @@ def grafico_histograma(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: s
     if not log and len(conjuntos) == 1:
         nota += ' Linha tracejada: média; pontilhada: mediana.'
     elif not log:
-        nota += (' As barras usam as mesmas classes nos dois conjuntos, em % das linhas de cada um; '
-                 'linhas tracejadas: a média de cada um, na cor dele.')
+        nota += (' Barras laranja: a amostra. Contorno azul: a população, com as mesmas classes. As duas estão '
+                 'em % das linhas de cada uma. Linhas tracejadas: a média de cada uma, na cor dela.')
+    elif len(conjuntos) > 1:
+        nota += (' Barras laranja: a amostra. Contorno azul: a população, com as mesmas classes, em % das linhas '
+                 'de cada uma.')
     if base['zeros_excluidos']:
         nota += f' {F.inteiro(base["zeros_excluidos"])} linhas com volume zero não entram na escala log.'
     return fig, nota
+
+
+def _passo_redondo(x: float) -> float:
+    """O menor passo 1, 2 ou 5 × 10^k que seja ≥ x (marcas de eixo redondas)."""
+    e = 10 ** np.floor(np.log10(x))
+    for m in (1, 2, 5, 10):
+        if m * e >= x:
+            return float(m * e)
+    return float(10 * e)
 
 
 def _valor(v: float, log: bool, sinal: bool = True) -> str:
@@ -263,14 +286,20 @@ def grafico_caixa(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str, p
     if not pontos:
         lo = min(e[3]['bigode_baixo'] for e in extremos)
         hi = max(e[3]['bigode_alto'] for e in extremos)
-        folga = (hi - lo) * (0.40 if len(extremos) > 1 else 0.26)
+        folga = (hi - lo) * (0.55 if len(extremos) > 1 else 0.26)
         fig.update_yaxes(range=[lo - folga, hi + folga])
+        if not sinal and not log:
+            # variável que nunca é negativa (amplitude): a folga de baixo é só espaço para o rótulo do
+            # mínimo, então o eixo não mostra marcas negativas
+            passo = _passo_redondo((hi + folga) / 5)
+            fig.update_yaxes(tickmode='array', tickvals=list(np.arange(0, hi + folga, passo)))
         nome_var = info['nome'].lower()
         varias = len(extremos) > 1          # lado a lado: rótulo curto, o nome já está no eixo
         for k, (vmin, onde_min), (vmax, onde_max), _, quem in extremos:   # dentro da área, na folga
-            topo = (f'▲ máx. {_valor(vmax, log, sinal)}' if varias
+            # lado a lado, o valor vai numa linha própria: "máx. R$ 11.601,2 mi" encostava no vizinho
+            topo = (f'▲ máx.<br>{_valor(vmax, log, sinal)}' if varias
                     else f'▲ máximo na {quem}: {_valor(vmax, log, sinal)}')
-            base = (f'▼ mín. {_valor(vmin, log, sinal)}' if varias
+            base = (f'▼ mín.<br>{_valor(vmin, log, sinal)}' if varias
                     else f'▼ mínimo na {quem}: {_valor(vmin, log, sinal)}')
             onde_max_txt = onde_max.replace(', ', '<br>') if varias else onde_max
             onde_min_txt = onde_min.replace(', ', '<br>') if varias else onde_min
@@ -303,17 +332,34 @@ def grafico_barras(conjuntos: list[tuple[pd.DataFrame, str, str]], coluna: str,
                    altura: int = 330) -> go.Figure:
     info = D.QUALITATIVAS[coluna]
     fig = go.Figure()
-    for d, nome, cor in conjuntos:
-        f = D.frequencias(d[coluna], info['ordem'])
-        fig.add_bar(x=f['categoria'], y=100 * f['proporcao'], name=nome, marker_color=cor,
-                    text=[F.pct(p, 1) for p in f['proporcao']], textposition='outside', cliponaxis=False,
-                    customdata=f['n'], hovertemplate='%{x}: %{y:.2f}% (%{customdata:,} linhas)<extra>'
-                                                      + nome + '</extra>')
-    layout(fig, altura, y='% das linhas', legenda=len(conjuntos) > 1)
-    fig.update_layout(barmode='group', bargap=0.25)
-    fig.update_xaxes(type='category')
-    topo = max(t.y.max() for t in fig.data)
-    fig.update_yaxes(range=[0, topo * 1.18], ticksuffix='%')
+    varios = len(conjuntos) > 1
+    horizontal = coluna == 'setor'                 # nomes longos: barras deitadas, nomes na horizontal
+    freqs = [D.frequencias(d[coluna], info['ordem']) for d, _, _ in conjuntos]
+    # com população e amostra e muitas categorias, os rótulos de valor se sobrepõem: o valor fica no hover
+    rotulos = not (varios and len(freqs[0]) > 6)
+    for (d, nome, cor), f in zip(conjuntos, freqs):
+        cat, val = f['categoria'], 100 * f['proporcao']
+        texto = [F.pct(p, 1) for p in f['proporcao']] if rotulos else None
+        if horizontal:
+            fig.add_bar(y=cat, x=val, orientation='h', name=nome, marker_color=cor, text=texto,
+                        textposition='outside', cliponaxis=False, customdata=f['n'],
+                        hovertemplate='%{y}: %{x:.2f}% (%{customdata:,} linhas)<extra>' + nome + '</extra>')
+        else:
+            fig.add_bar(x=cat, y=val, name=nome, marker_color=cor, text=texto,
+                        textposition='outside', cliponaxis=False, customdata=f['n'],
+                        hovertemplate='%{x}: %{y:.2f}% (%{customdata:,} linhas)<extra>' + nome + '</extra>')
+    topo = max(float((100 * f['proporcao']).max()) for f in freqs)
+    if horizontal:
+        n_cat = len(freqs[0])
+        layout(fig, max(altura, n_cat * (34 if varios else 26) + 90), x='% das linhas', legenda=varios)
+        fig.update_layout(barmode='group', bargap=0.25)
+        fig.update_yaxes(type='category', autorange='reversed')       # a maior em cima
+        fig.update_xaxes(range=[0, topo * 1.2], ticksuffix='%')
+    else:
+        layout(fig, altura, y='% das linhas', legenda=varios)
+        fig.update_layout(barmode='group', bargap=0.25)
+        fig.update_xaxes(type='category')
+        fig.update_yaxes(range=[0, topo * 1.18], ticksuffix='%')
     return fig
 
 
@@ -503,8 +549,10 @@ def graficos_volume(conjuntos: list[tuple[pd.DataFrame, str, str]], altura: int 
 def graficos_concentracao(c: dict, altura: int = 340) -> tuple[go.Figure, go.Figure]:
     """1b. Fatia das 5 maiores no volume do dia, por ano, e participação de cada ação nos 10 anos."""
     pa = c['por_ano']
+    # valores dentro das barras, no topo: fora delas, 11 rótulos se encostavam e cruzavam a linha da mediana
     f1 = go.Figure(go.Bar(x=[str(a) for a in pa.index], y=100 * pa.values, marker_color=COR_POP,
-                          text=[F.pct(v, 0) for v in pa.values], textposition='outside', cliponaxis=False,
+                          text=[F.pct(v, 0) for v in pa.values], textposition='inside', textangle=0,
+                          insidetextanchor='end', textfont=dict(color='white', size=10),
                           hovertemplate='%{x}: %{y:.1f}% do volume do dia (mediana)<extra></extra>'))
     layout(f1, altura, y='% do volume do dia')
     f1.update_layout(title=dict(text=f'<b>Fatia das {c["top"]} maiores no volume do dia</b> (mediana por ano)',
@@ -542,6 +590,24 @@ def graficos_humor(conjuntos: list[tuple[pd.DataFrame, str, str]], altura: int =
         f.update_xaxes(title='humor no pregão anterior (Fear & Greed B3)', tickangle=0)
     f1.update_yaxes(range=[0, 70])
     return f1, f2
+
+
+def tabela(df: pd.DataFrame) -> None:
+    """Tabela estática: quebra o texto dentro da célula e mostra todas as colunas, sem rolagem lateral.
+
+    Para tabelas largas, que no st.dataframe escondiam colunas à direita. A primeira coluna vira o rótulo
+    das linhas. Textos curtos ("p = 0,5", "< 0,0001", "valor-p") não quebram no meio."""
+    curto = 11
+
+    def junta(s):
+        s = str(s)
+        return s.replace(' ', '\u00a0').replace('-', '\u2011') if len(s) <= curto else s
+
+    t = df.copy()
+    t.columns = [junta(c) for c in t.columns]
+    for c in t.columns[1:]:
+        t[c] = t[c].map(junta)
+    st.table(t.set_index(t.columns[0]))
 
 
 def mostrar(fig: go.Figure, chave: str) -> None:

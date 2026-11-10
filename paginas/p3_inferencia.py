@@ -169,7 +169,7 @@ for aba, l in zip(abas, linhas):
 
 # ---------------------------------------------------------------- comparação
 st.header('2. Amostra × população: decisão e verdade')
-st.dataframe(I.tabela_comparacao(linhas, sim), hide_index=True, width='stretch')
+C.tabela(I.tabela_comparacao(linhas, sim))
 # P1 e P1-b (e M2 e M2-b) estimam o mesmo parâmetro com o mesmo intervalo: conta-se cada intervalo uma vez
 intervalos = {}
 for l in linhas:
@@ -257,15 +257,14 @@ if k:
         return 'rejeita H₀' if rejeita else 'não rejeita H₀'      # nunca "aceita H₀"
 
     mud = [c for c in outras if outras[c].resultado.rejeita != L[c].resultado.rejeita]
-    st.dataframe(pd.DataFrame({
+    C.tabela(pd.DataFrame({
         'hipótese': list(outras),
         'amostra oficial: valor-p': [F.pval(L[c].resultado.p_valor) for c in outras],
         'amostra oficial: decisão': [_decisao(L[c].resultado.rejeita) for c in outras],
         f'nova amostra (semente {semente}): valor-p': [F.pval(o.resultado.p_valor) for o in outras.values()],
         'nova amostra: decisão': [_decisao(o.resultado.rejeita) for o in outras.values()],
         'a decisão mudou?': ['sim' if c in mud else 'não' for c in outras],
-        'IC da nova amostra contém a população': ['sim' if o.ic_cobre else 'não' for o in outras.values()]}),
-        hide_index=True, width='stretch')
+        'IC da nova amostra contém a população': ['sim' if o.ic_cobre else 'não' for o in outras.values()]}))
     st.caption(f'Decisões a α = 5%. Nesta nova amostra, {len(mud)} das {len(outras)} decisões mudaram. '
                '"Não rejeita H₀" quer dizer que não há evidência contra H₀, e não que H₀ seja verdadeira.'
                if mud else 'Decisões a α = 5%. Nesta nova amostra, as decisões são as mesmas da amostra oficial.')
