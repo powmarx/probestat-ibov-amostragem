@@ -65,6 +65,11 @@ LEITURA = {
 st.header('1. As hipóteses')
 st.caption('Quatro hipóteses principais (P1, P2, M1, M2), duas de proporção e duas de média, e duas '
            'complementares (P1-b, M2-b), que fazem um segundo teste sobre o mesmo parâmetro.')
+AVISO_COMPLEMENTAR = {
+    'P1-b': 'Hipótese complementar: olha o mesmo parâmetro da P1 de outro ângulo, com um valor de H₀ mais exigente.',
+    'M2-b': 'Hipótese complementar: olha o mesmo parâmetro da M2 de outro ângulo, testando só a direção que a '
+            'literatura aponta.',
+}
 abas = st.tabs([l.hipotese.codigo for l in linhas])
 for aba, l in zip(abas, linhas):
     h, r = l.hipotese, l.resultado
@@ -72,10 +77,7 @@ for aba, l in zip(abas, linhas):
     with aba:
         st.subheader(f'{h.codigo} — {h.titulo}')
         if h.complementar:
-            st.info('Hipótese complementar, acrescentada depois das quatro principais para atender a uma segunda '
-                    'leitura do enunciado: duas hipóteses sobre o mesmo parâmetro de proporção e duas sobre o '
-                    'mesmo parâmetro de média. Usa a mesma amostra e os mesmos métodos; o resultado oficial do '
-                    'trabalho continua sendo o das quatro principais.', icon=':material/info:')
+            st.info(AVISO_COMPLEMENTAR[h.codigo], icon=':material/info:')
         st.markdown(f'**Pergunta:** {h.pergunta}')
         tipo = 'Proporção' if h.tipo == 'proporcao' else 'Média'
         st.markdown(f'**{"Evento" if h.tipo == "proporcao" else "Variável"} ({tipo.lower()}):** {h.definicao}.')
@@ -251,17 +253,22 @@ k = st.session_state['p3_sorteios']
 if k:
     semente = 10_000 + k
     outras = {l.hipotese.codigo: l for l in I.analisar(I.amostra_exercicio(P, n, semente), P)}
+    def _decisao(rejeita: bool) -> str:
+        return 'rejeita H₀' if rejeita else 'não rejeita H₀'      # nunca "aceita H₀"
+
+    mud = [c for c in outras if outras[c].resultado.rejeita != L[c].resultado.rejeita]
     st.dataframe(pd.DataFrame({
         'hipótese': list(outras),
-        'amostra oficial': [F.pval(L[c].resultado.p_valor) + (' (rejeita)' if L[c].resultado.rejeita else '')
-                            for c in outras],
-        f'nova amostra (semente {semente})': [F.pval(o.resultado.p_valor) + (' (rejeita)' if o.resultado.rejeita else '')
-                                               for o in outras.values()],
+        'amostra oficial: valor-p': [F.pval(L[c].resultado.p_valor) for c in outras],
+        'amostra oficial: decisão': [_decisao(L[c].resultado.rejeita) for c in outras],
+        f'nova amostra (semente {semente}): valor-p': [F.pval(o.resultado.p_valor) for o in outras.values()],
+        'nova amostra: decisão': [_decisao(o.resultado.rejeita) for o in outras.values()],
+        'a decisão mudou?': ['sim' if c in mud else 'não' for c in outras],
         'IC da nova amostra contém a população': ['sim' if o.ic_cobre else 'não' for o in outras.values()]}),
         hide_index=True, width='stretch')
-    mud = [c for c in outras if outras[c].resultado.rejeita != L[c].resultado.rejeita]
-    st.caption('Valor-p de cada teste. ' + (f'Decisões diferentes da amostra oficial: {", ".join(mud)}.' if mud
-                                             else 'Nesta nova amostra, as decisões são as mesmas da oficial.'))
+    st.caption(f'Decisões a α = 5%. Nesta nova amostra, {len(mud)} das {len(outras)} decisões mudaram. '
+               '"Não rejeita H₀" quer dizer que não há evidência contra H₀, e não que H₀ seja verdadeira.'
+               if mud else 'Decisões a α = 5%. Nesta nova amostra, as decisões são as mesmas da amostra oficial.')
 
 # ---------------------------------------------------------------- limitações
 st.header('4. Limitações')

@@ -434,10 +434,14 @@ def grafico_simulacao(sim: dict, linha, altura: int = 460) -> go.Figure:
     if x_h0 < bordas[0] - vao or x_h0 > bordas[-1] + vao:
         fig.update_xaxes(range=[bordas[0] - folga, bordas[-1] + folga])
         esquerda = x_h0 < bordas[0]
+        dist = abs(linha.parametro * k - x_h0)
+        eps = dist / float(np.std(est, ddof=1))          # erro-padrão = desvio das estimativas simuladas
+        unid = ' p.p.' if u == '%' else u
         fig.add_annotation(xref='paper', yref='paper', x=0.01 if esquerda else 0.99, y=0.95,
                            xanchor='left' if esquerda else 'right', showarrow=False,
                            text=(f'{"◀ " if esquerda else ""}H₀ = {F.num(x_h0, casas)}{u} fica fora da escala, '
-                                 f'{"à esquerda" if esquerda else "à direita"}{"" if esquerda else " ▶"}'),
+                                 f'{F.num(dist, casas)}{unid} {"à esquerda" if esquerda else "à direita"} da '
+                                 f'população (cerca de {F.inteiro(eps)} erros-padrão){"" if esquerda else " ▶"}'),
                            font=dict(size=14, color='#555555'), bgcolor='rgba(255,255,255,0.85)')
     return fig
 
