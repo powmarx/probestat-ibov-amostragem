@@ -27,8 +27,6 @@ m[5].metric('Variáveis', len(P.columns))
 
 # ---------------------------------------------------------------- sobre a base
 with st.expander('Sobre a base de dados: fonte, construção e variáveis', icon=':material/database:'):
-    ident = int((P['conferencia_tv'] == 'idêntico').sum())
-    corr = int((P['conferencia_tv'] == 'corrigido pelo TradingView').sum())
     st.markdown(f"""
 **Fonte dos preços.** Yahoo Finance, cotações diárias (abertura, máxima, mínima, fechamento e volume)
 de {r["acoes"]} ações da B3 e do Ibovespa. Página de histórico de cada ação, por exemplo
@@ -59,13 +57,8 @@ ação acompanha o índice, se a alta é "cara ou coroa", se o retorno e o gap m
 - Faltam dois pregões, porque faltam no Yahoo: 29/05/2017 (sem negócio na fonte) e 20/11/2020.
 - Tamanho: **{F.inteiro(len(P))} observações e {len(P.columns)} variáveis**.
 
-**Conferência com uma segunda fonte.** Todas as linhas foram comparadas com as cotações do TradingView
-(lidas por uma biblioteca não oficial e congeladas junto com a base). Em **{F.pct(ident / len(P), 1)}**
-das linhas o retorno do dia é idêntico nas duas fontes. As **{corr} linhas** com diferença acima de
-5 p.p., com o mesmo pregão anterior, foram tratadas como erros do Yahoo e receberam os preços do
-TradingView (em várias, o Yahoo põe o movimento no dia errado ou não ajusta um evento societário);
-nenhuma delas está na amostra. O resultado de cada linha está na coluna `conferencia_tv`.
 """)
+    st.markdown(D.frase_conferencia(P, C.amostra()))
     st.dataframe(D.tabela_conferencia(P), hide_index=True, width='stretch')
     st.caption('Detalhes, a lista das linhas corrigidas e a justificativa do limite de 5 p.p.: '
                f'[docs/conferencia_tradingview.md]({C.DOC_TV}), no repositório do trabalho.')

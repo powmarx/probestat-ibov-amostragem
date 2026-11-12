@@ -154,6 +154,20 @@ def test_tabela_conferencia(P):
     assert t['regra'].notna().all()
 
 
+def test_frase_conferencia(P):
+    import conferir_tradingview as CT
+    A = pd.read_parquet(PD.SAIDA / 'amostra.parquet')
+    pad = D.padroes_correcao(P)                       # cada linha corrigida tem um padrão anotado
+    assert len(pad) == len(CT.PADRAO_CORRECAO) == 19
+    assert pad.value_counts().to_dict() == {CT.SALTO: 8, CT.DIA_ERRADO: 6, CT.OSCILACAO: 4, CT.SERIE: 1}
+    t = D.frase_conferencia(P, A)
+    for trecho in ('94.794 linhas (98,1%)', '1.694 linhas (1,8%)', '19 linhas', 'Em 10 delas', 'Em 8,',
+                   'da KLBN11', 'Nenhuma das 19 caiu na amostra', '103 linhas', 'Em 2 o TradingView',
+                   'em 101 o pregão', 'não é tratado como a fonte certa'):
+        assert trecho in t
+    assert ';' not in t
+
+
 # ---------------------------------------------------------------- Painel 2: amostra × população
 @pytest.fixture(scope='module')
 def A():

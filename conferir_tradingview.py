@@ -39,6 +39,24 @@ PEQUENA = 'diferença até 5 p.p.'
 CORRIGIDO = 'corrigido pelo TradingView'
 CATEGORIAS = [IDENTICO, PEQUENA, CORRIGIDO, INTERVALO, SEM_DADO]
 
+# O que os dias vizinhos mostram em cada linha corrigida (docs/conferencia_tradingview.md, seção 5).
+# A escolha pelo TradingView vem desse padrão, e não de ele ser a fonte certa.
+DIA_ERRADO = 'dia errado'          # o Yahoo põe o movimento em outro dia: o acumulado é igual nas duas
+OSCILACAO = 'oscilação desfeita'   # o Yahoo cria uma oscilação que se desfaz logo depois
+SALTO = 'salto isolado'            # só aquele dia difere, e os vizinhos são idênticos
+SERIE = 'série diferente'          # a série inteira difere entre as fontes no período
+PADRAO_CORRECAO = {
+    ('AXIA3', '2019-01-02'): DIA_ERRADO, ('AXIA3', '2019-01-03'): DIA_ERRADO,
+    ('BRAP4', '2019-01-28'): DIA_ERRADO, ('BRAP4', '2019-01-29'): DIA_ERRADO,
+    ('PCAR3', '2024-02-28'): DIA_ERRADO, ('PCAR3', '2024-03-01'): DIA_ERRADO,
+    ('MRVE3', '2019-01-18'): OSCILACAO, ('MRVE3', '2019-01-21'): OSCILACAO,
+    ('EQTL3', '2024-08-12'): OSCILACAO, ('EQTL3', '2024-08-14'): OSCILACAO,
+    ('AXIA3', '2025-12-22'): SALTO, ('CVCB3', '2023-06-14'): SALTO, ('CYRE3', '2026-01-02'): SALTO,
+    ('IRBR3', '2022-08-24'): SALTO, ('ITUB4', '2021-10-04'): SALTO, ('MGLU3', '2024-02-01'): SALTO,
+    ('PCAR3', '2023-08-23'): SALTO, ('UGPA3', '2021-06-28'): SALTO,
+    ('KLBN11', '2020-03-23'): SERIE,
+}
+
 
 # ---------------------------------------------------------------- download (uma vez)
 def baixar() -> None:

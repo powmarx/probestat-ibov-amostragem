@@ -299,7 +299,10 @@ st.markdown(f"""
 - **Qualidade da fonte.** A base do Yahoo foi conferida com o TradingView: {F.pct(conf_tv.get('idêntico', 0) / N, 1)}
   das linhas são idênticas, {F.inteiro(conf_tv.get('corrigido pelo TradingView', 0))} linhas com diferença acima de
   5 p.p. foram corrigidas ({F.inteiro(corr_amostra)} na amostra), e {F.inteiro(conf_tv.get('diferença até 5 p.p.', 0))}
-  com diferenças menores ficaram como estão. Dois pregões faltam no Yahoo (29/05/2017 e 20/11/2020).
+  com diferenças menores ficaram como estão. Dois pregões faltam no Yahoo (29/05/2017 e 20/11/2020). A
+  conferência mostra onde as duas fontes concordam, e não a verdade. Nas linhas corrigidas, a escolha pelo
+  TradingView vem dos dias vizinhos, e na da KLBN11 ela é menos segura. As séries históricas oficiais da B3
+  (arquivos COTAHIST) poderiam desempatar e não foram usadas.
 - **Dividendos.** Os retornos não incluem dividendos e JCP, que fazem o preço cair na data-ex; por isso o retorno
   e o gap médios ficam um pouco subestimados. O tamanho desse efeito não foi medido: exigiria uma fonte de
   proventos com data-ex, valor e separação entre dividendos e JCP, que esta base não tem, e a qualidade desses

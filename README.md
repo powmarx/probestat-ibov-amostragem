@@ -197,6 +197,9 @@ preço ajustado de cada fonte. As regras valem na ordem da tabela:
 | diferença até 5 p.p. | fica como no Yahoo | 1.694 |
 | corrigido pelo TradingView | diferença > 5 p.p.: a linha recebe os preços do TradingView | 19 |
 
+O TradingView não é tratado como a fonte certa. Nas 19 linhas corrigidas, ele é coerente com os dias
+vizinhos e o Yahoo não: em 10, o Yahoo põe o movimento no dia errado ou cria uma oscilação que se
+desfaz logo depois, em 8 só aquele dia difere, e na da KLBN11 a série inteira difere entre as fontes.
 Nenhuma das 19 linhas corrigidas está na amostra. Os valores extremos que são idênticos nas duas fontes
 (circuit breaker de 26/10/2026, março de 2020) foram mantidos. A justificativa do limite, a lista das
 linhas corrigidas e a sensibilidade a outros limites estão em
@@ -292,7 +295,7 @@ pip install -r requirements.txt
 python preparar_dados.py     # monta a população a partir do bruto congelado; grava parquet, csv e zip
 python amostra.py            # refaz o sorteio e o manifesto
 streamlit run app.py         # abre os painéis
-python -m pytest             # 78 testes
+python -m pytest             # 79 testes
 ```
 
 - `preparar_dados.py` e `amostra.py` regravam os arquivos de `dados/`. Com numpy 2.5.3, eles saem
@@ -320,7 +323,10 @@ python -m pytest             # 78 testes
   uma fonte de proventos com data-ex, valor e separação entre dividendos e JCP, que esta base não tem, e
   a qualidade desses dados no Yahoo não foi conferida.
 - **Qualidade da fonte.** A base do Yahoo foi conferida com o TradingView (98,1% das linhas idênticas);
-  1.694 linhas com diferenças de até 5 p.p. ficaram como no Yahoo.
+  1.694 linhas com diferenças de até 5 p.p. ficaram como no Yahoo. A conferência mostra onde as duas
+  fontes concordam, e não a verdade. Nas 19 linhas corrigidas, a escolha pelo TradingView vem dos dias
+  vizinhos, e na da KLBN11 ela é menos segura. As séries históricas oficiais da B3 (arquivos COTAHIST)
+  poderiam desempatar e não foram usadas.
 - **Valores extremos.** O resultado da M2 depende de três linhas do circuit breaker de 26/10/2026.
 - **Muitos testes.** Seis testes aumentam a chance de uma rejeição falsa; com Bonferroni nenhuma
   decisão muda.

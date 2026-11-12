@@ -176,6 +176,54 @@ def tabela_conferencia(d: pd.DataFrame) -> pd.DataFrame:
                          'proporção': [F.pct(p, 2) for p in f['proporcao']]})
 
 
+def padroes_correcao(P: pd.DataFrame) -> pd.Series:
+    """Padrão dos dias vizinhos (CT.PADRAO_CORRECAO) em cada linha corrigida pelo TradingView."""
+    import conferir_tradingview as CT
+    k = P.loc[P['conferencia_tv'] == CT.CORRIGIDO]
+    chaves = zip(k['ativo'], pd.to_datetime(k['data']).dt.strftime('%Y-%m-%d'))
+    return pd.Series([CT.PADRAO_CORRECAO[c] for c in chaves], index=k.index)
+
+
+def frase_conferencia(P: pd.DataFrame, A: pd.DataFrame) -> str:
+    """Texto da conferência com o TradingView (Painel 1), com as contagens tiradas dos dados."""
+    import conferir_tradingview as CT
+    n = P['conferencia_tv'].value_counts()
+    N = len(P)
+    pad = padroes_correcao(P).value_counts()
+    vizinhos = int(pad.get(CT.DIA_ERRADO, 0) + pad.get(CT.OSCILACAO, 0))
+    salto, serie = int(pad.get(CT.SALTO, 0)), int(pad.get(CT.SERIE, 0))
+    corr = int(n.get(CT.CORRIGIDO, 0))
+    sem, interv = int(n.get(CT.SEM_DADO, 0)), int(n.get(CT.INTERVALO, 0))
+    na_amostra = int((A['conferencia_tv'] == CT.CORRIGIDO).sum())
+    amostra = (f'Nenhuma das {corr} caiu na amostra.' if na_amostra == 0
+               else f'{na_amostra} das {corr} caíram na amostra.')
+    linha_serie = ''
+    if serie:
+        linha_serie = (' Na linha que sobra, da KLBN11, a série inteira difere entre as fontes, e a escolha '
+                       'é menos segura.' if serie == 1 else
+                       f' Em {serie}, a série inteira difere entre as fontes, e a escolha é menos segura.')
+    return (
+        '**Conferência com uma segunda fonte.** Para achar erros nas cotações, cada linha do Yahoo foi '
+        'comparada com a do mesmo dia no TradingView. A comparação usa o retorno do dia, e não o preço, '
+        'porque as duas fontes ajustam o histórico de jeitos diferentes. As cotações do TradingView foram '
+        'lidas por uma biblioteca não oficial e guardadas junto com a base.\n\n'
+        f'- **{F.inteiro(n.get(CT.IDENTICO, 0))} linhas ({F.pct(n.get(CT.IDENTICO, 0) / N, 1)}):** o retorno '
+        'é igual nas duas fontes.\n'
+        f'- **{F.inteiro(n.get(CT.PEQUENA, 0))} linhas ({F.pct(n.get(CT.PEQUENA, 0) / N, 1)}):** a diferença '
+        f'é pequena, de até {F.num(CT.LIMITE_CORRECAO, 0)} p.p. Essas linhas ficam como no Yahoo.\n'
+        f'- **{corr} linhas:** a diferença passa de {F.num(CT.LIMITE_CORRECAO, 0)} p.p., o que um '
+        'arredondamento ou um ajuste de proventos raramente explica. Nessas linhas, o TradingView é '
+        f'coerente com os dias vizinhos e o Yahoo não. Em {vizinhos} delas, o Yahoo põe o movimento no dia '
+        f'errado ou cria uma oscilação que se desfaz logo depois. Em {salto}, só aquele dia difere, como num '
+        f'evento societário mal ajustado.{linha_serie} Essas linhas receberam os preços do TradingView. '
+        f'{amostra}\n'
+        f'- **{F.inteiro(sem + interv)} linhas:** não dá para comparar. Em {sem} o TradingView não tem o dia, '
+        f'e em {interv} o pregão anterior não é o mesmo nas duas fontes. Essas linhas ficam como no Yahoo.\n\n'
+        'O TradingView não é tratado como a fonte certa. A base continua sendo a do Yahoo, e a conferência '
+        'mostra onde as duas fontes concordam, não a verdade. A categoria de cada linha está na coluna '
+        '`conferencia_tv` e na tabela abaixo.')
+
+
 def nota_base_faixa(d: pd.DataFrame, coluna: str,
                     onde: str = '"Como o Fear & Greed B3 é calculado", na seção do humor do Painel 1') -> str | None:
     """Diz sobre quantas linhas as proporções da faixa são calculadas e como a faixa é medida.
