@@ -15,8 +15,8 @@ comparando a população com uma amostra aleatória simples em três painéis in
 | Vídeo (YouTube, não listado) | https://youtu.be/3LRusBkUYlY |
 | Base de dados (CSV da população) | [`dados/populacao.zip`](dados/populacao.zip) · fonte: [Yahoo Finance](https://finance.yahoo.com/quote/VALE3.SA/history) |
 
-O app hiberna depois de alguns dias sem acesso. Se aparecer a tela de "app dormindo", clique para
-acordá-lo; o primeiro acesso pode levar cerca de 30 segundos.
+O app hiberna depois de 12 horas sem acesso. Se aparecer a tela de app dormindo, basta clicar em
+"Yes, get this app back up!" para acordá-lo, e o primeiro acesso demora um pouco.
 
 ## Painéis
 
@@ -32,8 +32,8 @@ acordá-lo; o primeiro acesso pode levar cerca de 30 segundos.
 
 - **Preços:** [Yahoo Finance](https://finance.yahoo.com/), cotações diárias (abertura, máxima, mínima,
   fechamento e volume) das 40 ações listadas abaixo e do Ibovespa, obtidas pela API pública de gráficos
-  `https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}.SA?interval=1d&range=10y`. Cada ação tem
-  sua página de histórico (links na tabela).
+  `https://query1.finance.yahoo.com/v8/finance/chart/{TICKER}.SA?interval=1d&range=10y` (para o
+  Ibovespa, o símbolo é `^BVSP`). Cada ação tem sua página de histórico (links na tabela).
 - **As 40 ações e o critério de escolha:** são as que o coletor de dados do autor acompanha, montado na
   disciplina IA001 – Análise e Visualização de Dados com Python e Ferramentas Assistidas por IA para
   estudar se as três ações de maior peso no Ibovespa (VALE3, ITUB4 e PETR4, que hoje somam 27,6% do
