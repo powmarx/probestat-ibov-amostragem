@@ -105,7 +105,7 @@ def test_dicionario_cobre_as_27_colunas():
 
 def test_frase_forma(P):
     t = D.frase_forma(P['ret'], '%')
-    assert '0,053%' in t and 'acima da mediana' in t and 'caudas muito mais pesadas' in t
+    assert '0,053%' in t and 'acima da mediana' in t and 'dias extremos são muito mais frequentes' in t
     assert 'R$' in D.frase_forma(P['fin'], 'R$ milhões')
     # amplitude e volume: cauda à direita, mediana como dia típico
     amp = D.frase_forma(P['amp'], '%', positiva=True)

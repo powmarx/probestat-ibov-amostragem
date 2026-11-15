@@ -286,9 +286,10 @@ def frase_forma(x, unidade: str, positiva: bool = False) -> str:
 
     lado = 'acima' if m['media'] > m['mediana'] else 'abaixo'
     if m['curtose'] > 3:
-        cauda = 'caudas muito mais pesadas que as da normal: os dias extremos pesam muito na média'
+        cauda = ('os dias extremos são muito mais frequentes do que numa distribuição normal e pesam muito '
+                 'na média')
     else:
-        cauda = 'caudas próximas às da normal'
+        cauda = 'os dias extremos têm frequência próxima à de uma distribuição normal'
     texto = (f'Média {v(m["media"])} e mediana {v(m["mediana"])}: a média fica {lado} da mediana. '
              f'Assimetria {F.num(m["assimetria"], 2)} e curtose {F.num(m["curtose"], 1)}, ou seja, {cauda}.')
     if positiva and m['assimetria'] > 1:

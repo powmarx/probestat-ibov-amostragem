@@ -335,7 +335,7 @@ python -m pytest             # 79 testes
 ## Próximos passos
 
 Este trabalho é uma etapa de um objetivo maior do autor: construir, com IA (LLM e RAG), um sistema que
-infira compras de ativos e preveja o comportamento de um ativo específico. Os resultados daqui mostram o
+infira decisões sobre ativos e preveja o comportamento de um ativo específico. Os resultados daqui mostram o
 que esse sistema terá de enfrentar:
 
 - **Efeito pequeno diante do ruído.** O retorno médio diário da população é de 0,053%, com
