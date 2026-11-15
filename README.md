@@ -12,7 +12,7 @@ comparando a população com uma amostra aleatória simples em três painéis in
 | Painel 1 — População | https://probestat-ibov-amostragem.streamlit.app/ (página inicial) |
 | Painel 2 — Amostra | https://probestat-ibov-amostragem.streamlit.app/p2_amostra |
 | Painel 3 — Inferência e comparação | https://probestat-ibov-amostragem.streamlit.app/p3_inferencia |
-| Vídeo (YouTube, não listado) | _a preencher_ |
+| Vídeo (YouTube, não listado) | https://youtu.be/3LRusBkUYlY |
 | Base de dados (CSV da população) | [`dados/populacao.zip`](dados/populacao.zip) · fonte: [Yahoo Finance](https://finance.yahoo.com/quote/VALE3.SA/history) |
 
 O app hiberna depois de alguns dias sem acesso. Se aparecer a tela de "app dormindo", clique para
